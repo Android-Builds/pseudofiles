@@ -1,0 +1,50 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
+import 'package:pseudofiles/classes/file_manager.dart';
+import 'package:pseudofiles/widgets/file_list_tile.dart';
+
+class RecentFiles extends StatelessWidget {
+  const RecentFiles({
+    Key? key,
+    required this.manager,
+    required this.count,
+    this.scroll = false,
+  }) : super(key: key);
+  final FileManager manager;
+  final int count;
+  final bool scroll;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: manager.getRecentFiles(count),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List paths = snapshot.data as List;
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: scroll
+                ? const AlwaysScrollableScrollPhysics()
+                : const NeverScrollableScrollPhysics(),
+            itemCount: paths.length,
+            itemBuilder: (BuildContext context, int index) {
+              File file = File(paths[index]);
+              return FileListTile(
+                entity: file,
+                manager: manager,
+                oneTapAction: (FileSystemEntity entity) =>
+                    OpenFile.open(entity.path),
+                longPressAction: (FileSystemEntity entity) {},
+              );
+            },
+          );
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+}
