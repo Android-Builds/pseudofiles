@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/classes/media_enum.dart';
 import 'package:pseudofiles/utils/constants.dart';
@@ -29,7 +28,9 @@ class _AudioPageState extends State<AudioPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(manager: widget.manager),
+      appBar: AppBar(
+        title: const Text('Audios'),
+      ),
       body: FutureBuilder(
         future: getSongs(),
         builder: (context, snapshot) {
@@ -72,7 +73,7 @@ class _AudioPageState extends State<AudioPage> {
                           foregroundColor:
                               Theme.of(context).textTheme.bodyText1!.color,
                         ),
-                        title: Text(widget.manager.getFileName(file)),
+                        title: Text(FileManager.getFileName(file)),
                         subtitle: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

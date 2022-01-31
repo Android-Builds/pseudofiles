@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -89,9 +91,20 @@ class _StoragePageState extends State<StoragePage> {
     size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: CustomAppBar(manager: widget.manager),
-      body: HawkFabMenu(
+      body: ValueListenableBuilder(
+        valueListenable: widget.manager.selectedFiles,
+        builder: (context, value, child) {
+          List<FileSystemEntity> list = value as List<FileSystemEntity>;
+          return hawkMenu(list.isEmpty);
+        },
+      ),
+    );
+  }
+
+  Widget hawkMenu(bool isEmpty) => HawkFabMenu(
         icon: AnimatedIcons.menu_close,
-        fabColor: accentColor,
+        iconColor: isEmpty ? null : Colors.transparent,
+        fabColor: isEmpty ? accentColor : Colors.transparent,
         items: [
           HawkFabMenuItem(
             label: 'New File',
@@ -113,7 +126,5 @@ class _StoragePageState extends State<StoragePage> {
           ),
         ],
         body: FilesPage(manager: widget.manager),
-      ),
-    );
-  }
+      );
 }

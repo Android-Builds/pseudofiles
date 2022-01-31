@@ -21,7 +21,6 @@ class DirectoryListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<FileSystemEntity> listEntity = manager.getAllFiles(entity.path);
     FileStat fileStat = entity.statSync();
     return ListTile(
       tileColor: manager.selectedFiles.value
@@ -36,13 +35,10 @@ class DirectoryListTile extends StatelessWidget {
         foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
         child: const Icon(Icons.folder),
       ),
-      title: Text(manager.getFileName(entity)),
+      title: Text(FileManager.getFileName(entity)),
       subtitle: Row(
         children: [
-          Text(
-            manager.getEntityCount(listEntity.length),
-            style: TextStyle(fontSize: size.width * 0.025),
-          ),
+          EntityCountText(manager: manager, directory: entity as Directory),
           const Spacer(),
           Text(
             manager.getDate(fileStat.modified),
@@ -50,6 +46,36 @@ class DirectoryListTile extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class EntityCountText extends StatelessWidget {
+  const EntityCountText({
+    Key? key,
+    required this.manager,
+    required this.directory,
+  }) : super(key: key);
+  final FileManager manager;
+  final Directory directory;
+
+  Future getCount() async {
+    return directory.list().length;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: getCount(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Text(
+            manager.getEntityCount(snapshot.data as int),
+            style: TextStyle(fontSize: size.width * 0.025),
+          );
+        }
+        return const Text('');
+      },
     );
   }
 }

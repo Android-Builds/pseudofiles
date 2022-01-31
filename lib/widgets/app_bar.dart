@@ -60,10 +60,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         List<FileSystemEntity> list = value as List<FileSystemEntity>;
         return list.isEmpty
             ? AppBar(
-                title: const Text('Filesss'),
+                title: const Text('Files'),
                 actions: [
                   Menu(manager: manager),
                 ],
+                bottom: bottom,
               )
             : AppBar(
                 title: const Text('Files'),

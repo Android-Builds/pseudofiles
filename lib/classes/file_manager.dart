@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -11,21 +12,28 @@ import 'package:pseudofiles/classes/media_enum.dart';
 enum sortTypes { name, date, size, type }
 
 class FileManager {
-  bool _showHidden = false;
-  String _rootDir = '';
-  final ValueNotifier<String> _currentPath = ValueNotifier<String>('');
+  static bool _showHidden = false;
+  static final ValueNotifier<String> _currentPath = ValueNotifier<String>('');
   final ValueNotifier<List<FileSystemEntity>> _selectedFiles =
       ValueNotifier<List<FileSystemEntity>>([]);
   final platform = const MethodChannel('pseudoFiles');
+  static ScrollController _dashBoardScrollController = ScrollController();
+  static ScrollController _storagePageScrollController = ScrollController();
 
   bool get showHidden => _showHidden;
 
   set showHidden(bool value) => _showHidden = value;
 
-  String get rootDir => _rootDir;
-
   ValueNotifier<String> get currentPath => _currentPath;
   ValueNotifier<List<FileSystemEntity>> get selectedFiles => _selectedFiles;
+
+  static getDashBoardScrollController() {
+    return _dashBoardScrollController;
+  }
+
+  static getStoragePageScrollController() {
+    return _storagePageScrollController;
+  }
 
   void reloadPath() {
     if (_currentPath.value.endsWith(Platform.pathSeparator)) {
@@ -60,11 +68,11 @@ class FileManager {
     return DateFormat.yMMMEd().add_jm().format(dateTime);
   }
 
-  String getFileName(FileSystemEntity entity) {
+  static String getFileName(FileSystemEntity entity) {
     return entity.path.split(Platform.pathSeparator).last;
   }
 
-  FileStat getFileStat(FileSystemEntity file) {
+  static FileStat getFileStat(FileSystemEntity file) {
     return file.statSync();
   }
 
@@ -174,7 +182,7 @@ class FileManager {
 
   //Methods for fetching FileSystemEntity list
 
-  int getComparisionByCase(sortTypes type, FileSystemEntity entity1,
+  static int getComparisionByCase(sortTypes type, FileSystemEntity entity1,
       FileSystemEntity entity2, bool descending) {
     if (descending) {
       FileSystemEntity temp = entity2;
@@ -199,7 +207,7 @@ class FileManager {
     }
   }
 
-  List<FileSystemEntity> getSortedList(List<FileSystemEntity> files,
+  static List<FileSystemEntity> getSortedList(List<FileSystemEntity> files,
       List<FileSystemEntity> folders, sortTypes type) {
     files.sort((a, b) => getComparisionByCase(type, a, b, false));
     folders.sort((a, b) => getComparisionByCase(type, a, b, false));
@@ -213,6 +221,56 @@ class FileManager {
     return storages;
   }
 
+  static fetchAllDirectories(List<Object> arguments) async {
+    List<FileSystemEntity> directories =
+        Directory(arguments[1] as String).listSync();
+    final List<FileSystemEntity> files =
+        directories.whereType<File>().toList().where((element) {
+      if (_showHidden) {
+        return true;
+      } else {
+        return !getFileName(element).startsWith('.');
+      }
+    }).toList();
+    final List<FileSystemEntity> folders =
+        directories.whereType<Directory>().toList().where((element) {
+      if (_showHidden) {
+        return true;
+      } else {
+        return !getFileName(element).startsWith('.');
+      }
+    }).toList();
+    (arguments[0] as SendPort)
+        .send(getSortedList(files, folders, sortTypes.name));
+  }
+
+  Future<dynamic> spawnNewIsolate() async {
+    ReceivePort receivePort = ReceivePort();
+    dynamic result;
+    if (_currentPath.value.isEmpty) {
+      List<Directory> rootDirectories = await getRootDirectories();
+      // directories = rootDirectories[0].listSync();
+      _currentPath.value = rootDirectories[0].path;
+    } else {
+      // directories = Directory(_currentPath.value).listSync();
+    }
+    try {
+      await Future.wait([
+        Isolate.spawn(fetchAllDirectories, [
+          receivePort.sendPort,
+          _currentPath.value
+        ]).then((_) => receivePort.first, onError: (_) => receivePort.close()),
+      ]).then((value) {
+        result = value.first;
+      });
+      receivePort.close();
+      return result;
+    } catch (e) {
+      debugPrint("Error: $e");
+      return result;
+    }
+  }
+
   Future<List<FileSystemEntity>> getDirectories(sortTypes type) async {
     List<FileSystemEntity> directories = [];
     if (_currentPath.value.isEmpty) {
@@ -222,10 +280,6 @@ class FileManager {
     } else {
       directories = Directory(_currentPath.value).listSync();
     }
-    _rootDir = await getRootDirectory();
-    //Stopwatch stopwatch = Stopwatch()..start();
-    // .where((element) => shouldGetHiddenFiles(element))
-    // .toList();
     final List<FileSystemEntity> files =
         directories.whereType<File>().toList().where((element) {
       if (_showHidden) {

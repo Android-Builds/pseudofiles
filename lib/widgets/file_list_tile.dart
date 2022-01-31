@@ -1,10 +1,14 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pseudofiles/classes/apk.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
+import 'package:pseudofiles/widgets/apk_icon.dart';
+import 'package:pseudofiles/widgets/thumbnail_image.dart';
 
 class FileListTile extends StatelessWidget {
   const FileListTile({
@@ -20,21 +24,72 @@ class FileListTile extends StatelessWidget {
   final Function oneTapAction;
   final Function longPressAction;
 
-  IconData getLeadingIcon(String? type) {
+  Widget getIcon(IconData iconData) {
+    return Icon(iconData);
+  }
+
+  getThumbnail() {
+    return CircleAvatar(
+      radius: size.width * 0.06,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(100.0),
+            child: ThumbnailImage(videoPath: entity.path),
+          ),
+          Icon(
+            FontAwesomeIcons.play,
+            size: size.width * 0.05,
+          )
+        ],
+      ),
+    );
+  }
+
+  getImage(BuildContext context) {
+    return CircleAvatar(
+      radius: size.width * 0.06,
+      backgroundColor: accentColor,
+      foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
+      backgroundImage: FileImage(
+        File(entity.path),
+      ),
+    );
+  }
+
+  getIconWidget(BuildContext context, IconData iconData) {
+    return CircleAvatar(
+      radius: size.width * 0.06,
+      backgroundColor: accentColor,
+      foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
+      child: Icon(iconData),
+    );
+  }
+
+  Widget getLeadingIcon(BuildContext context, String? type) {
     print(type);
     switch (type) {
+      case 'vnd.android.package-archive':
+        return AppIcon(
+          manager: manager,
+          path: entity.path,
+          apk: APK(entity.path, Uint8List.fromList([])),
+        );
+      case 'image':
+        return getImage(context);
       case 'pdf':
-        return FontAwesomeIcons.solidFilePdf;
+        return getIconWidget(context, FontAwesomeIcons.solidFilePdf);
       case 'json':
-        return FontAwesomeIcons.solidFileCode;
+        return getIconWidget(context, FontAwesomeIcons.solidFileCode);
       case 'zip':
-        return FontAwesomeIcons.solidFileArchive;
+        return getIconWidget(context, FontAwesomeIcons.solidFileArchive);
       case 'audio':
-        return FontAwesomeIcons.solidFileAudio;
+        return getIconWidget(context, FontAwesomeIcons.solidFileAudio);
       case 'video':
-        return FontAwesomeIcons.solidFileVideo;
+        return getThumbnail();
       default:
-        return FontAwesomeIcons.solidFile;
+        return getIconWidget(context, FontAwesomeIcons.solidFile);
     }
   }
 
@@ -48,22 +103,8 @@ class FileListTile extends StatelessWidget {
           : null,
       onLongPress: () => longPressAction(entity),
       onTap: () => oneTapAction(entity),
-      leading: manager.getMimeType(entity.path) == 'image'
-          ? CircleAvatar(
-              radius: 23.0,
-              backgroundColor: accentColor,
-              foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
-              backgroundImage: FileImage(
-                File(entity.path),
-              ),
-            )
-          : CircleAvatar(
-              radius: 23.0,
-              backgroundColor: accentColor,
-              foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
-              child: Icon(getLeadingIcon(manager.getMimeType(entity.path))),
-            ),
-      title: Text(manager.getFileName(entity)),
+      leading: getLeadingIcon(context, manager.getMimeType(entity.path)),
+      title: Text(FileManager.getFileName(entity)),
       subtitle: Row(
         children: [
           Text(

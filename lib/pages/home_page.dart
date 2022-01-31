@@ -1,12 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
-import 'package:pseudofiles/pages/recent_files_page.dart';
-import 'package:pseudofiles/pages/settings/settings_home.dart';
+import 'package:pseudofiles/pages/storage_page.dart';
 import 'package:pseudofiles/utils/constants.dart';
-import 'package:pseudofiles/widgets/category_list.dart';
-import 'package:pseudofiles/widgets/recent_files.dart';
-import 'package:pseudofiles/widgets/storage_details.dart';
-import 'package:pseudofiles/widgets/storage_list.dart';
+import 'package:pseudofiles/pages/dashboard/dashboard.dart';
+import 'package:pseudofiles/widgets/action_buttons_bar.dart';
+
+import 'dashboard/nav_bar_bottom.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,57 +18,49 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   FileManager manager = FileManager();
+  PageController pageController = PageController();
+  ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Files'),
-        actions: [
-          IconButton(
-              onPressed: () {
-                manager.getRecentFiles(10);
-              },
-              // onPressed: () => Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => SettingsHome(),
-              //     )),
-              icon: const Icon(Icons.settings))
-        ],
-      ),
-      body: ListView(
+      body: Stack(
         children: [
-          StorageDetails(manager: manager),
-          const ListTile(
-            dense: true,
-            title: Text(
-              'Categories',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+          PageView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: pageController,
+            children: [
+              DashBoard(manager: manager),
+              StoragePage(manager: manager),
+            ],
           ),
-          CategoryList(manager: manager),
-          ListTile(
-            dense: true,
-            title: const Text(
-              'Recent Files',
-              style: TextStyle(fontWeight: FontWeight.bold),
+          Align(
+            alignment: Alignment.bottomCenter,
+            // child: NavBarBottom(
+            //   pageController: pageController,
+            // ),
+            // child: ActionButtonsBar(),
+            child: ValueListenableBuilder(
+              valueListenable: manager.selectedFiles,
+              builder: (context, value, child) {
+                List<FileSystemEntity> list = value as List<FileSystemEntity>;
+                return list.isEmpty
+                    ? NavBarBottom(pageController: pageController)
+                    : ActionButtonsBar(manager: manager);
+                // return AnimatedCrossFade(
+                //   duration: const Duration(milliseconds: 100),
+                //   firstChild: NavBarBottom(
+                //     pageController: pageController,
+                //   ),
+                //   secondChild: const ActionButtonsBar(),
+                //   crossFadeState: list.isEmpty
+                //       ? CrossFadeState.showFirst
+                //       : CrossFadeState.showSecond,
+                // );
+              },
             ),
-            trailing: TextButton(
-              onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RecentFilesPage(manager: manager),
-                  )),
-              child: Text(
-                'See More',
-                style: TextStyle(fontSize: size.width * 0.03),
-              ),
-            ),
-          ),
-          RecentFiles(manager: manager, count: 10),
-          //StorageList(manager: manager),
+          )
         ],
       ),
     );

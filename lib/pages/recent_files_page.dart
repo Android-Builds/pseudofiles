@@ -14,7 +14,7 @@ class RecentFilesPage extends StatelessWidget {
       ),
       body: RecentFiles(
         manager: manager,
-        count: 100,
+        count: -1,
         scroll: true,
       ),
     );

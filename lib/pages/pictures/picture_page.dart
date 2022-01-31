@@ -29,7 +29,7 @@ class _PicturesPageState extends State<PicturesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Files'),
+        title: const Text('Pictures'),
       ),
       body: FutureBuilder(
         future: getImages(),

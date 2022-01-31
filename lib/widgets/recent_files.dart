@@ -18,27 +18,36 @@ class RecentFiles extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ScrollController controller = ScrollController();
     return FutureBuilder(
       future: manager.getRecentFiles(count),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List paths = snapshot.data as List;
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: scroll
-                ? const AlwaysScrollableScrollPhysics()
-                : const NeverScrollableScrollPhysics(),
-            itemCount: paths.length,
-            itemBuilder: (BuildContext context, int index) {
-              File file = File(paths[index]);
-              return FileListTile(
-                entity: file,
-                manager: manager,
-                oneTapAction: (FileSystemEntity entity) =>
-                    OpenFile.open(entity.path),
-                longPressAction: (FileSystemEntity entity) {},
-              );
-            },
+          return Scrollbar(
+            isAlwaysShown: scroll,
+            interactive: true,
+            showTrackOnHover: true,
+            radius: const Radius.circular(10.0),
+            controller: controller,
+            child: ListView.builder(
+              shrinkWrap: true,
+              controller: controller,
+              physics: scroll
+                  ? const AlwaysScrollableScrollPhysics()
+                  : const NeverScrollableScrollPhysics(),
+              itemCount: paths.length,
+              itemBuilder: (BuildContext context, int index) {
+                File file = File(paths[index]);
+                return FileListTile(
+                  entity: file,
+                  manager: manager,
+                  oneTapAction: (FileSystemEntity entity) =>
+                      OpenFile.open(entity.path),
+                  longPressAction: (FileSystemEntity entity) {},
+                );
+              },
+            ),
           );
         }
         return const Center(

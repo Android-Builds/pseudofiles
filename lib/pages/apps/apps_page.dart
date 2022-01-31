@@ -16,9 +16,8 @@ class AppsPage extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: CustomAppBar(
-          height: kToolbarHeight * 2,
-          manager: manager,
+        appBar: AppBar(
+          title: const Text('Apps'),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: Align(
