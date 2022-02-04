@@ -37,10 +37,6 @@ class _HomePageState extends State<HomePage> {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            // child: NavBarBottom(
-            //   pageController: pageController,
-            // ),
-            // child: ActionButtonsBar(),
             child: ValueListenableBuilder(
               valueListenable: manager.selectedFiles,
               builder: (context, value, child) {
@@ -48,16 +44,6 @@ class _HomePageState extends State<HomePage> {
                 return list.isEmpty
                     ? NavBarBottom(pageController: pageController)
                     : ActionButtonsBar(manager: manager);
-                // return AnimatedCrossFade(
-                //   duration: const Duration(milliseconds: 100),
-                //   firstChild: NavBarBottom(
-                //     pageController: pageController,
-                //   ),
-                //   secondChild: const ActionButtonsBar(),
-                //   crossFadeState: list.isEmpty
-                //       ? CrossFadeState.showFirst
-                //       : CrossFadeState.showSecond,
-                // );
               },
             ),
           )

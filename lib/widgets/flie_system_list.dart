@@ -24,62 +24,78 @@ class FileSystemEntityList extends StatefulWidget {
 
 class _FileSystemEntityListState extends State<FileSystemEntityList> {
   //List<FileSystemEntity> widget.manager.selectedFiles = [];
+  late ScrollController scrollController;
+
+  void listener() {
+    if (widget.manager.selectedFiles.value.isEmpty ||
+        widget.manager.selectedFiles.value.isNotEmpty) {
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    widget.manager.selectedFiles.addListener(listener);
+    scrollController = ScrollController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.manager.selectedFiles.removeListener(listener);
+    super.dispose();
+  }
+
+  bool presentInList(List<FileSystemEntity> list, FileSystemEntity entity) {
+    return list.any((element) => element.path == entity.path);
+  }
+
+  void selectOrRemoveEntity(FileSystemEntity entity) {
+    if (presentInList(widget.manager.selectedFiles.value, entity)) {
+      widget.manager.selectedFiles.value =
+          List.from(widget.manager.selectedFiles.value)
+            ..removeWhere((element) => element.path == entity.path);
+    } else {
+      widget.manager.selectedFiles.value =
+          List.from(widget.manager.selectedFiles.value)..add(entity);
+    }
+  }
+
+  void openEntity(FileSystemEntity entity) async {
+    if (entity is Directory) {
+      widget.manager.changeDirectory(entity.path);
+    } else {
+      await OpenFile.open(entity.path);
+    }
+  }
 
   void oneTapAction(FileSystemEntity entity) async {
-    if (widget.manager.selectedFiles.value.isEmpty) {
-      if (entity is Directory) {
-        widget.manager.changeDirectory(entity.path);
+    if (widget.manager.selectedFilesForOperation.value.isNotEmpty) {
+      if (presentInList(
+          widget.manager.selectedFilesForOperation.value, entity)) {
+        return;
       } else {
-        await OpenFile.open(entity.path);
+        openEntity(entity);
       }
     } else {
-      if (widget.manager.selectedFiles.value
-          .any((element) => element.path == entity.path)) {
-        widget.manager.selectedFiles.value =
-            List.from(widget.manager.selectedFiles.value)
-              ..removeWhere((element) => element.path == entity.path);
+      if (widget.manager.selectedFiles.value.isNotEmpty) {
+        selectOrRemoveEntity(entity);
       } else {
-        widget.manager.selectedFiles.value =
-            List.from(widget.manager.selectedFiles.value)..add(entity);
+        openEntity(entity);
       }
     }
     setState(() {});
   }
 
   void longPressAction(FileSystemEntity entity) {
-    if (widget.manager.selectedFiles.value.isEmpty) {
+    if (widget.manager.selectedFilesForOperation.value.isEmpty &&
+        widget.manager.selectedFiles.value.isEmpty) {
       widget.manager.selectedFiles.value =
           List.from(widget.manager.selectedFiles.value)..add(entity);
     } else {
       return;
     }
     setState(() {});
-  }
-
-  List<String> getDirectoryNames() {
-    List<String> pathSplit =
-        widget.manager.currentPath.value.split(Platform.pathSeparator);
-    if (widget.manager.currentPath.value.contains('0')) {
-      pathSplit = pathSplit.sublist(4, pathSplit.length);
-      pathSplit.insert(0, 'Internal');
-    } else {
-      pathSplit = pathSplit.sublist(3, pathSplit.length);
-      pathSplit.insert(0, 'SD Card');
-    }
-    return pathSplit;
-  }
-
-  String getCurrentDir() {
-    List<String> pathSplit =
-        widget.manager.currentPath.value.split(Platform.pathSeparator);
-    if (widget.manager.currentPath.value.contains('0')) {
-      pathSplit = pathSplit.sublist(4, pathSplit.length);
-      pathSplit.insert(0, 'Internal');
-    } else {
-      pathSplit = pathSplit.sublist(3, pathSplit.length);
-      pathSplit.insert(0, 'SD Card');
-    }
-    return pathSplit.last;
   }
 
   @override
@@ -105,36 +121,51 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
                   child: ListView.builder(
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
+                    controller: scrollController,
                     scrollDirection: Axis.horizontal,
-                    itemCount: getDirectoryNames().length,
+                    itemCount: widget.manager.getDirectoryNames().length,
                     itemBuilder: (context, index) {
+                      if (scrollController
+                              .positions.last.hasContentDimensions &&
+                          scrollController.offset <
+                              scrollController.position.maxScrollExtent) {
+                        scrollController.animateTo(
+                          scrollController.position.maxScrollExtent,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.fastOutSlowIn,
+                        );
+                      }
                       return Row(
                         children: [
                           TextButton(
                             onPressed: () {
-                              if (getDirectoryNames()[index] == 'Internal' ||
-                                  getDirectoryNames()[index] == 'SD Card') {
+                              if (widget.manager.getDirectoryNames()[index] ==
+                                      'Internal' ||
+                                  widget.manager.getDirectoryNames()[index] ==
+                                      'SD Card') {
                                 widget.manager.goToRootDirectory();
                               } else {
                                 widget.manager.goToParentDirectory();
                               }
                             },
                             child: Text(
-                              getDirectoryNames()[index],
+                              widget.manager.getDirectoryNames()[index],
                               style: TextStyle(
-                                color: getDirectoryNames()[index] ==
-                                        getCurrentDir()
-                                    ? accentColor
-                                    : Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .color,
+                                color:
+                                    widget.manager.getDirectoryNames()[index] ==
+                                            widget.manager.getCurrentDir()
+                                        ? accentColor
+                                        : Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .color,
+                                fontSize: size.width * 0.035,
                               ),
                             ),
                           ),
-                          index == getDirectoryNames().length - 1
+                          index == widget.manager.getDirectoryNames().length - 1
                               ? const SizedBox.shrink()
-                              : const Icon(Icons.arrow_right_sharp),
+                              : const Icon(Icons.arrow_right),
                         ],
                       );
                     },

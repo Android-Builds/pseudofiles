@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
-import 'package:pseudofiles/classes/media_enum.dart';
+import 'package:pseudofiles/classes/enums/media_enum.dart';
 import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
 import 'package:pseudofiles/widgets/app_bar.dart';

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pseudofiles/classes/categories.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
-import 'package:pseudofiles/classes/media_enum.dart';
+import 'package:pseudofiles/classes/enums/media_enum.dart';
 import 'package:pseudofiles/pages/apps/apps_page.dart';
 import 'package:pseudofiles/pages/audio_page.dart';
 import 'package:pseudofiles/pages/pictures/picture_page.dart';
@@ -113,11 +113,11 @@ class CategoryList extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: size.width * 0.06,
-                backgroundColor: accentColor,
+                backgroundColor: accentColor.withOpacity(0.4),
                 child: Icon(
                   categories[index].icon,
                   size: size.width * 0.06,
-                  color: Theme.of(context).textTheme.bodyText1!.color,
+                  color: accentColor,
                 ),
               ),
               const SizedBox(height: 20.0),

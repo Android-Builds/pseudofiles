@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
-import 'package:pseudofiles/utils/themes.dart';
+import 'package:pseudofiles/utils/constants.dart';
+import 'package:pseudofiles/widgets/custom_animated_icon.dart';
 
 import 'menu.dart';
 
@@ -12,10 +13,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.manager,
     this.bottom,
     this.height = kToolbarHeight,
+    required this.globalKey,
   }) : super(key: key);
   final FileManager manager;
   final PreferredSizeWidget? bottom;
   final double height;
+  final GlobalKey<ScaffoldState> globalKey;
+  static bool isOpen = true;
 
   Future<void> _confirmDeleteDialog(BuildContext context) async {
     return showDialog<void>(
@@ -54,40 +58,57 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: manager.selectedFiles,
-      builder: (context, value, child) {
-        List<FileSystemEntity> list = value as List<FileSystemEntity>;
-        return list.isEmpty
-            ? AppBar(
-                title: const Text('Files'),
-                actions: [
-                  Menu(manager: manager),
-                ],
-                bottom: bottom,
-              )
-            : AppBar(
-                title: const Text('Files'),
-                actions: [
-                  IconButton(
-                    onPressed: () {
-                      _confirmDeleteDialog(context)
-                          .then((value) => manager.reloadPath());
-                    },
-                    icon: const Icon(Icons.delete),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.select_all,
-                      color: list.isEmpty ? Colors.grey : accentColor,
-                    ),
-                  ),
-                  Menu(manager: manager),
-                ],
-                bottom: bottom,
-              );
-      },
+    return AppBar(
+      leading: StatefulBuilder(
+        builder: (_, setState) {
+          return IconButton(
+            icon: ValueListenableBuilder(
+              valueListenable: manager.selectedFiles,
+              builder: (context, value, child) {
+                return CustomAnimatedIcon(
+                  isOpen: (value as List<FileSystemEntity>).isEmpty,
+                  icon1: Icons.menu,
+                  icon2: Icons.close,
+                );
+              },
+            ),
+            onPressed: () {
+              if (manager.selectedFiles.value.isEmpty) {
+                globalKey.currentState!.openDrawer();
+              } else {
+                manager.selectedFiles.value = manager.selectedFilesForOperation
+                    .value = List.from(manager.selectedFiles.value)..clear();
+                setState(() => isOpen = !isOpen);
+              }
+            },
+          );
+        },
+      ),
+      title: ValueListenableBuilder(
+        valueListenable: manager.currentPath,
+        builder: (context, value, child) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(manager.getCurrentDir()),
+            FutureBuilder(
+              future: manager.getFilesAndFolderCount(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text(
+                    snapshot.data as String,
+                    style: TextStyle(fontSize: size.width * 0.025),
+                  );
+                }
+                return const Text('');
+              },
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        Menu(manager: manager),
+      ],
+      bottom: bottom,
     );
   }
 

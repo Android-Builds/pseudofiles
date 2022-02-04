@@ -17,12 +17,14 @@ class FileListTile extends StatelessWidget {
     required this.manager,
     required this.oneTapAction,
     required this.longPressAction,
+    this.showColor = true,
   }) : super(key: key);
 
   final FileSystemEntity entity;
   final FileManager manager;
   final Function oneTapAction;
   final Function longPressAction;
+  final bool showColor;
 
   Widget getIcon(IconData iconData) {
     return Icon(iconData);
@@ -97,8 +99,9 @@ class FileListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     FileStat fileStat = entity.statSync();
     return ListTile(
-      tileColor: manager.selectedFiles.value
-              .any((element) => element.path == entity.path)
+      tileColor: showColor &&
+              manager.selectedFiles.value
+                  .any((element) => element.path == entity.path)
           ? accentColor.withOpacity(0.2)
           : null,
       onLongPress: () => longPressAction(entity),
@@ -108,7 +111,7 @@ class FileListTile extends StatelessWidget {
       subtitle: Row(
         children: [
           Text(
-            '${((fileStat.size) / (1024 * 1024)).toStringAsFixed(2)} mb',
+            manager.getSize(fileStat.size),
             style: TextStyle(fontSize: size.width * 0.025),
           ),
           const Spacer(),

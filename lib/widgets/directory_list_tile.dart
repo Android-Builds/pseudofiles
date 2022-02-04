@@ -12,19 +12,22 @@ class DirectoryListTile extends StatelessWidget {
     required this.manager,
     required this.oneTapAction,
     required this.longPressAction,
+    this.showColor = true,
   }) : super(key: key);
 
   final FileSystemEntity entity;
   final FileManager manager;
   final Function oneTapAction;
   final Function longPressAction;
+  final bool showColor;
 
   @override
   Widget build(BuildContext context) {
     FileStat fileStat = entity.statSync();
     return ListTile(
-      tileColor: manager.selectedFiles.value
-              .any((element) => element.path == entity.path)
+      tileColor: showColor &&
+              manager.selectedFiles.value
+                  .any((element) => element.path == entity.path)
           ? accentColor.withOpacity(0.2)
           : null,
       onLongPress: () => longPressAction(entity),

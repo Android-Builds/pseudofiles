@@ -1,13 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:hawk_fab_menu/hawk_fab_menu.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/pages/files_page.dart';
 import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
 import 'package:pseudofiles/widgets/app_bar.dart';
+import 'package:pseudofiles/widgets/app_drawer.dart';
+import 'package:pseudofiles/widgets/floating_button_menu.dart';
+import 'package:pseudofiles/widgets/ongoing_task_overlay.dart';
 
 class StoragePage extends StatefulWidget {
   const StoragePage({Key? key, required this.manager}) : super(key: key);
@@ -25,53 +27,66 @@ class _StoragePageState extends State<StoragePage> {
   }
 
   TextEditingController controller = TextEditingController();
-
   UnderlineInputBorder borderStyle =
       UnderlineInputBorder(borderSide: BorderSide(color: accentColor));
+  final GlobalKey<ScaffoldState> globalKey = GlobalKey();
 
   Future<void> _createFileOrFolderDialog(String type) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Create a $type'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Input a name to create a $type'),
-                TextField(
-                  controller: controller,
-                  decoration: InputDecoration(
-                    border: borderStyle,
-                    focusedBorder: borderStyle,
-                    enabledBorder: borderStyle,
-                  ),
+        return SizedBox(
+          child: AlertDialog(
+            insetPadding: EdgeInsets.zero,
+            contentPadding: const EdgeInsets.only(
+              top: 20.0,
+              left: 25.0,
+              right: 25.0,
+              bottom: 10.0,
+            ),
+            buttonPadding: const EdgeInsets.all(5.0),
+            title: Text('Create a $type'),
+            content: SizedBox(
+              width: size.width * 0.75,
+              child: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    Text('Input a name to create a $type'),
+                    TextField(
+                      controller: controller,
+                      decoration: InputDecoration(
+                        border: borderStyle,
+                        focusedBorder: borderStyle,
+                        enabledBorder: borderStyle,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  controller.clear();
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text('Ok'),
+                onPressed: () {
+                  if (type == 'file') {
+                    widget.manager.createFile(controller.text);
+                  } else {
+                    widget.manager.createDirectory(controller.text);
+                  }
+                  controller.clear();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
           ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                controller.clear();
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () {
-                if (type == 'file') {
-                  widget.manager.createFile(controller.text);
-                } else {
-                  widget.manager.createDirectory(controller.text);
-                }
-                controller.clear();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
         );
       },
     );
@@ -90,41 +105,55 @@ class _StoragePageState extends State<StoragePage> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: CustomAppBar(manager: widget.manager),
+      key: globalKey,
+      drawer: const AppDrawer(),
+      appBar: CustomAppBar(
+        manager: widget.manager,
+        globalKey: globalKey,
+      ),
       body: ValueListenableBuilder(
-        valueListenable: widget.manager.selectedFiles,
+        valueListenable: widget.manager.taskFile,
         builder: (context, value, child) {
-          List<FileSystemEntity> list = value as List<FileSystemEntity>;
-          return hawkMenu(list.isEmpty);
+          if (value == 'none') {
+            return Stack(
+              alignment: Alignment.center,
+              children: [
+                FilesPage(manager: widget.manager),
+                const SizedBox.shrink(),
+              ],
+            );
+          } else {
+            return Stack(
+              children: [
+                AbsorbPointer(child: FilesPage(manager: widget.manager)),
+                Align(
+                  alignment: Alignment.center,
+                  child: OngoingTaskOverlay(manager: widget.manager),
+                ),
+              ],
+            );
+          }
         },
       ),
+      floatingActionButton: ValueListenableBuilder(
+          valueListenable: widget.manager.selectedFiles,
+          builder: (context, value, child) {
+            List<FileSystemEntity> list = value as List<FileSystemEntity>;
+            return list.isEmpty
+                ? FloatingButtonMenu(
+                    items: [
+                      FloatingButtonMenuButton('File', Icons.file_copy, () {
+                        _createFileOrFolderDialog('file');
+                        //setState(() {});
+                      }),
+                      FloatingButtonMenuButton('Folder', Icons.folder, () {
+                        _createFileOrFolderDialog('folder');
+                        //setState(() {});
+                      }),
+                    ],
+                  )
+                : const SizedBox.shrink();
+          }),
     );
   }
-
-  Widget hawkMenu(bool isEmpty) => HawkFabMenu(
-        icon: AnimatedIcons.menu_close,
-        iconColor: isEmpty ? null : Colors.transparent,
-        fabColor: isEmpty ? accentColor : Colors.transparent,
-        items: [
-          HawkFabMenuItem(
-            label: 'New File',
-            ontap: () {
-              _createFileOrFolderDialog('file');
-              setState(() {});
-            },
-            icon: const Icon(Icons.file_copy),
-            color: accentColor,
-          ),
-          HawkFabMenuItem(
-            label: 'New Folder',
-            ontap: () {
-              _createFileOrFolderDialog('folder');
-              setState(() {});
-            },
-            icon: const Icon(Icons.folder_open),
-            color: accentColor,
-          ),
-        ],
-        body: FilesPage(manager: widget.manager),
-      );
 }

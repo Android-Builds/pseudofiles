@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
-import 'package:pseudofiles/classes/media_enum.dart';
+import 'package:pseudofiles/classes/enums/media_enum.dart';
 import 'package:pseudofiles/pages/videos/vidoes_view_grid.dart';
 import 'package:pseudofiles/utils/constants.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';

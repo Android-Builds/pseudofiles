@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/utils/constants.dart';
+import 'package:pseudofiles/utils/themes.dart';
 
 class NavBarBottom extends StatefulWidget {
   const NavBarBottom({
@@ -81,8 +82,7 @@ class _NavBarBottomState extends State<NavBarBottom> {
 
   Widget navBarIcon(IconData icon, int index) => Container(
         decoration: BoxDecoration(
-          color:
-              index == selectedIndex ? Colors.red.shade200 : Colors.transparent,
+          color: index == selectedIndex ? accentColor : Colors.transparent,
           borderRadius: BorderRadius.circular(15.0),
         ),
         child: IconButton(

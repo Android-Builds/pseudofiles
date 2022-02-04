@@ -1,7 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-final Color accentColor = Colors.red.shade200;
+final ColorScheme lightScheme = ColorScheme.fromSeed(seedColor: Colors.green);
+final ColorScheme darkScheme =
+    ColorScheme.fromSeed(seedColor: Colors.green, brightness: Brightness.dark);
+
+// final Color accentColor = Colors.blue.shade200;
+final Color accentColor = Colors.blue.shade200;
+
+final lightThemeExp = ThemeData(
+  colorSchemeSeed: Colors.green,
+  brightness: Brightness.light,
+  textTheme: GoogleFonts.montserratTextTheme(
+    ThemeData.light().textTheme,
+  ),
+);
+final darkThemeExp = ThemeData(
+  colorSchemeSeed: Colors.green,
+  brightness: Brightness.dark,
+  textTheme: GoogleFonts.montserratTextTheme(
+    ThemeData.dark().textTheme,
+  ),
+);
 
 ThemeData lightTheme = ThemeData.light().copyWith(
   textTheme: GoogleFonts.montserratTextTheme(
@@ -33,6 +53,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
 
 ThemeData darkTheme = ThemeData.dark().copyWith(
   backgroundColor: Colors.grey.shade900,
+  applyElevationOverlayColor: true,
   cardColor: Colors.grey[900],
   visualDensity: VisualDensity.adaptivePlatformDensity,
   canvasColor: Colors.black,

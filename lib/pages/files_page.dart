@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
@@ -15,6 +14,8 @@ class FilesPage extends StatefulWidget {
 }
 
 class _FilesPageState extends State<FilesPage> {
+  static bool isFirst = true;
+
   Future<bool> _onWillPop() async {
     if (!(await widget.manager.isRootDirectory())) {
       widget.manager.goToParentDirectory();
@@ -46,6 +47,20 @@ class _FilesPageState extends State<FilesPage> {
   }
 
   @override
+  void dispose() {
+    isFirst = true;
+    super.dispose();
+  }
+
+  Future getDirs() async {
+    if (isFirst) {
+      await Future.delayed(const Duration(milliseconds: 1000));
+      isFirst = false;
+    }
+    return widget.manager.getDirectories(sortTypes.name);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -57,7 +72,7 @@ class _FilesPageState extends State<FilesPage> {
           valueListenable: widget.manager.currentPath,
           builder: (BuildContext context, value, Widget? child) {
             return FutureBuilder(
-              future: widget.manager.getDirectories(sortTypes.name),
+              future: getDirs(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   List<FileSystemEntity> list =

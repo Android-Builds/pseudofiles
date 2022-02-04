@@ -1,20 +1,28 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:math';
+import 'package:path/path.dart' as path;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pseudofiles/classes/media_enum.dart';
+import 'package:pseudofiles/classes/enums/media_enum.dart';
+import 'package:pseudofiles/classes/enums/operation_enum.dart';
 
 enum sortTypes { name, date, size, type }
 
 class FileManager {
   static bool _showHidden = false;
   static final ValueNotifier<String> _currentPath = ValueNotifier<String>('');
+  static final ValueNotifier<String> _speed = ValueNotifier<String>('0 Mb/s');
+  static final ValueNotifier<String> _taskFile = ValueNotifier<String>('none');
+  static OperationType _operationType = OperationType.none;
   final ValueNotifier<List<FileSystemEntity>> _selectedFiles =
+      ValueNotifier<List<FileSystemEntity>>([]);
+  final ValueNotifier<List<FileSystemEntity>> _selectedFilesForOperation =
       ValueNotifier<List<FileSystemEntity>>([]);
   final platform = const MethodChannel('pseudoFiles');
   static ScrollController _dashBoardScrollController = ScrollController();
@@ -25,7 +33,16 @@ class FileManager {
   set showHidden(bool value) => _showHidden = value;
 
   ValueNotifier<String> get currentPath => _currentPath;
+  ValueNotifier<String> get taskFile => _taskFile;
+  ValueNotifier<String> get speed => _speed;
   ValueNotifier<List<FileSystemEntity>> get selectedFiles => _selectedFiles;
+  ValueNotifier<List<FileSystemEntity>> get selectedFilesForOperation =>
+      _selectedFilesForOperation;
+
+  set operationType(OperationType operationType) =>
+      _operationType = operationType;
+
+  OperationType get operationType => _operationType;
 
   static getDashBoardScrollController() {
     return _dashBoardScrollController;
@@ -44,6 +61,28 @@ class FileManager {
           _currentPath.value.substring(0, _currentPath.value.length) +
               Platform.pathSeparator;
     }
+  }
+
+  List<String> getDirectoryNames() {
+    if (_currentPath.value.isEmpty) {
+      return ['Internal'];
+    }
+    List<String> pathSplit = _currentPath.value.split(Platform.pathSeparator);
+    if (_currentPath.value.contains('0')) {
+      pathSplit = pathSplit.sublist(4, pathSplit.length);
+      pathSplit.insert(0, 'Internal');
+    } else {
+      pathSplit = pathSplit.sublist(3, pathSplit.length);
+      pathSplit.insert(0, 'SD Card');
+    }
+    if (pathSplit.last == '') {
+      pathSplit.removeLast();
+    }
+    return pathSplit;
+  }
+
+  String getCurrentDir() {
+    return getDirectoryNames().last;
   }
 
   Future<String> getRootDirectory() async {
@@ -96,24 +135,86 @@ class FileManager {
     File(_currentPath.value + Platform.pathSeparator + name).createSync();
   }
 
-  bool copyToDirectory(File file) {
-    File copiedFile = file.copySync(
-        currentPath.value + Platform.pathSeparator + getFileName(file));
-    return copiedFile.existsSync();
+  String taskEntityCount() {
+    int fileLength = _selectedFiles.value.whereType<File>().length;
+    int folderLength = _selectedFiles.value.whereType<Directory>().length;
+    if (folderLength == 0) {
+      return '$fileLength ${fileLength == 1 ? 'File' : 'Files'}';
+    } else if (fileLength == 0) {
+      return '$folderLength ${folderLength == 1 ? 'Folder' : 'Folders'}';
+    } else {
+      return '$folderLength ${folderLength == 1 ? 'Folder' : 'Folders'} and $fileLength ${fileLength == 1 ? 'File' : 'Files'}';
+    }
   }
 
-  void listFiles() {
-    List<FileSystemEntity> files = [];
-    for (var element in selectedFiles.value) {
-      if (element is Directory) {
-        files.addAll(element.listSync(followLinks: true, recursive: true));
-      } else {
-        files.add(element);
+  Future<void> copyDirectory(Directory source, Directory destination) async {
+    List<FileSystemEntity> enteties = source.listSync(recursive: false);
+    for (var entity in enteties) {
+      if (entity is Directory) {
+        Directory newDirectory = Directory(
+            path.join(destination.absolute.path, path.basename(entity.path)));
+        newDirectory.createSync();
+        await copyDirectory(entity.absolute, newDirectory);
+      } else if (entity is File) {
+        await copyFile(entity, destination);
       }
     }
   }
 
-  void copyEntities() {}
+  void inc(String path) {
+    _taskFile.value = path;
+  }
+
+  Future<void> copyFile(File file, Directory directory) async {
+    _taskFile.value = path.basename(file.path);
+    await Future.delayed(const Duration(seconds: 2));
+    Stopwatch stopwatch = Stopwatch();
+    // File copiedFile = file
+    //     .copySync(path.join(directory.absolute.path, path.basename(file.path)));
+    if (file.existsSync()) {
+      stopwatch.start();
+      List<int> bytes = file.readAsBytesSync();
+      File copiedFile = await File(
+              path.join(directory.absolute.path, path.basename(file.path)))
+          .writeAsBytes(bytes);
+      _speed.value = getSize(copiedFile.statSync().size ~/
+              (stopwatch.elapsedMilliseconds * 0.001)) +
+          '/s';
+      stopwatch.stop();
+    }
+  }
+
+  void cutOrCopyFilesAndDirs(OperationType type) async {
+    _taskFile.value = '1';
+    for (var element in _selectedFilesForOperation.value) {
+      if (element is Directory) {
+        Directory newDirectory = Directory(
+            path.join(_currentPath.value, path.basename(element.path)));
+        newDirectory.createSync();
+        await copyDirectory(element, newDirectory);
+      } else {
+        await copyFile(element as File, Directory(_currentPath.value));
+      }
+    }
+    if (type == OperationType.move) {
+      deleteEntity();
+    }
+    _taskFile.value = 'none';
+    _selectedFiles.value = _selectedFilesForOperation.value =
+        List.from(_selectedFiles.value)..clear();
+  }
+
+  void deleteEntities() async {
+    _taskFile.value = '1';
+    for (var element in _selectedFiles.value) {
+      _taskFile.value = path.basename(element.path);
+      await Future.delayed(const Duration(seconds: 2));
+      element.deleteSync(recursive: true);
+    }
+    _taskFile.value = 'none';
+    _selectedFiles.value = _selectedFilesForOperation.value =
+        List.from(_selectedFiles.value)..clear();
+  }
 
   //
   bool isFile(FileSystemEntity entity) {
@@ -139,23 +240,22 @@ class FileManager {
     }
   }
 
-  getSize(int bytes) {
+  String getSize(int bytes) {
     const suffix = ['B', 'KB', 'MB', 'GB', 'TB'];
-    int bytes2 = bytes;
+    int size = bytes;
     if (bytes != 0) {
       int base = 0;
       while (bytes > 1024) {
         bytes = bytes ~/ 1024;
         base++;
       }
-      return '${(bytes2 / pow(1024, base)).toStringAsFixed(2)} ${suffix[base]}';
+      return '${(size / pow(1024, base)).toStringAsFixed(2)} ${suffix[base]}';
     } else {
       return '0B';
     }
   }
 
   //Methods to move between directories
-
   Future<void> goToRootDirectory() async {
     changeDirectory((await getRootDirectory()));
   }
@@ -221,57 +321,57 @@ class FileManager {
     return storages;
   }
 
-  static fetchAllDirectories(List<Object> arguments) async {
-    List<FileSystemEntity> directories =
-        Directory(arguments[1] as String).listSync();
-    final List<FileSystemEntity> files =
-        directories.whereType<File>().toList().where((element) {
-      if (_showHidden) {
-        return true;
-      } else {
-        return !getFileName(element).startsWith('.');
-      }
-    }).toList();
-    final List<FileSystemEntity> folders =
-        directories.whereType<Directory>().toList().where((element) {
-      if (_showHidden) {
-        return true;
-      } else {
-        return !getFileName(element).startsWith('.');
-      }
-    }).toList();
-    (arguments[0] as SendPort)
-        .send(getSortedList(files, folders, sortTypes.name));
-  }
+  // static fetchAllDirectories(List<Object> arguments) async {
+  //   List<FileSystemEntity> directories =
+  //       Directory(arguments[1] as String).listSync();
+  //   final List<FileSystemEntity> files =
+  //       directories.whereType<File>().toList().where((element) {
+  //     if (_showHidden) {
+  //       return true;
+  //     } else {
+  //       return !getFileName(element).startsWith('.');
+  //     }
+  //   }).toList();
+  //   final List<FileSystemEntity> folders =
+  //       directories.whereType<Directory>().toList().where((element) {
+  //     if (_showHidden) {
+  //       return true;
+  //     } else {
+  //       return !getFileName(element).startsWith('.');
+  //     }
+  //   }).toList();
+  //   (arguments[0] as SendPort)
+  //       .send(getSortedList(files, folders, sortTypes.name));
+  // }
 
-  Future<dynamic> spawnNewIsolate() async {
-    ReceivePort receivePort = ReceivePort();
-    dynamic result;
-    if (_currentPath.value.isEmpty) {
-      List<Directory> rootDirectories = await getRootDirectories();
-      // directories = rootDirectories[0].listSync();
-      _currentPath.value = rootDirectories[0].path;
-    } else {
-      // directories = Directory(_currentPath.value).listSync();
-    }
-    try {
-      await Future.wait([
-        Isolate.spawn(fetchAllDirectories, [
-          receivePort.sendPort,
-          _currentPath.value
-        ]).then((_) => receivePort.first, onError: (_) => receivePort.close()),
-      ]).then((value) {
-        result = value.first;
-      });
-      receivePort.close();
-      return result;
-    } catch (e) {
-      debugPrint("Error: $e");
-      return result;
-    }
-  }
+  // Future<dynamic> spawnNewIsolate() async {
+  //   ReceivePort receivePort = ReceivePort();
+  //   dynamic result;
+  //   if (_currentPath.value.isEmpty) {
+  //     List<Directory> rootDirectories = await getRootDirectories();
+  //     // directories = rootDirectories[0].listSync();
+  //     _currentPath.value = rootDirectories[0].path;
+  //   } else {
+  //     // directories = Directory(_currentPath.value).listSync();
+  //   }
+  //   try {
+  //     await Future.wait([
+  //       Isolate.spawn(fetchAllDirectories, [
+  //         receivePort.sendPort,
+  //         _currentPath.value
+  //       ]).then((_) => receivePort.first, onError: (_) => receivePort.close()),
+  //     ]).then((value) {
+  //       result = value.first;
+  //     });
+  //     receivePort.close();
+  //     return result;
+  //   } catch (e) {
+  //     debugPrint("Error: $e");
+  //     return result;
+  //   }
+  // }
 
-  Future<List<FileSystemEntity>> getDirectories(sortTypes type) async {
+  Future<List<List<FileSystemEntity>>> getEntities() async {
     List<FileSystemEntity> directories = [];
     if (_currentPath.value.isEmpty) {
       List<Directory> rootDirectories = await getRootDirectories();
@@ -296,7 +396,17 @@ class FileManager {
         return !getFileName(element).startsWith('.');
       }
     }).toList();
-    return getSortedList(files, folders, type);
+    return [folders, files];
+  }
+
+  Future<String> getFilesAndFolderCount() async {
+    List<List<FileSystemEntity>> filesAndDirs = await getEntities();
+    return '${filesAndDirs[0].length} folders, ${filesAndDirs[1].length} files';
+  }
+
+  Future<List<FileSystemEntity>> getDirectories(sortTypes type) async {
+    List<List<FileSystemEntity>> filesAndDirs = await getEntities();
+    return getSortedList(filesAndDirs[1], filesAndDirs[0], type);
   }
 
   List<FileSystemEntity> getAllFiles(String path) {
