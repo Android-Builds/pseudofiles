@@ -26,4 +26,4 @@ Some portion of the code for this project was inspired from [file_manager](https
 
 
 ## 🔖 LICENCE
-[GPLv3](https://github.com/Android-Builds/pseudofiles/LICENSE)
+[GPLv3](https://github.com/Android-Builds/pseudofiles/blob/main/LICENSE)
