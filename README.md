@@ -22,8 +22,8 @@ Some portion of the code for this project was inspired from [file_manager](https
 - [x] Dark/White Mode.
 - [ ] Material 3 Support
 
-## 📸 ScreenShots
+## ScreenShots
 
 
-## 🔖 LICENCE
+## LICENCE
 [GPLv3](https://github.com/Android-Builds/pseudofiles/blob/main/LICENSE)
