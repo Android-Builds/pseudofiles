@@ -14,7 +14,7 @@ Some portion of the code for this project was inspired from [file_manager](https
 - [x] Videos
 - [x] Pictures
 - [ ] Search.
-- [ ] Sort Files [While this works, the option to choose betwee sort types is yet to be added].
+- [x] Sort Files.
 - [x] Show/Hide Hidden files.
 - [x] Copy/Move/Paste Files [Still wip as it occupies the UI, need to provide background support].
 - [x] Delete Files/Folders.
