@@ -9,14 +9,12 @@ class DirectoryListTile extends StatelessWidget {
   const DirectoryListTile({
     Key? key,
     required this.entity,
-    required this.manager,
     required this.oneTapAction,
     required this.longPressAction,
     this.showColor = true,
   }) : super(key: key);
 
   final FileSystemEntity entity;
-  final FileManager manager;
   final Function oneTapAction;
   final Function longPressAction;
   final bool showColor;
@@ -26,7 +24,7 @@ class DirectoryListTile extends StatelessWidget {
     FileStat fileStat = entity.statSync();
     return ListTile(
       tileColor: showColor &&
-              manager.selectedFiles.value
+              FileManager.selectedFiles.value
                   .any((element) => element.path == entity.path)
           ? accentColor.withOpacity(0.2)
           : null,
@@ -41,10 +39,10 @@ class DirectoryListTile extends StatelessWidget {
       title: Text(FileManager.getFileName(entity)),
       subtitle: Row(
         children: [
-          EntityCountText(manager: manager, directory: entity as Directory),
+          EntityCountText(directory: entity as Directory),
           const Spacer(),
           Text(
-            manager.getDate(fileStat.modified),
+            FileManager.getDate(fileStat.modified),
             style: TextStyle(fontSize: size.width * 0.025),
           )
         ],
@@ -56,10 +54,8 @@ class DirectoryListTile extends StatelessWidget {
 class EntityCountText extends StatelessWidget {
   const EntityCountText({
     Key? key,
-    required this.manager,
     required this.directory,
   }) : super(key: key);
-  final FileManager manager;
   final Directory directory;
 
   Future getCount() async {
@@ -73,7 +69,7 @@ class EntityCountText extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Text(
-            manager.getEntityCount(snapshot.data as int),
+            FileManager.getEntityCount(snapshot.data as int),
             style: TextStyle(fontSize: size.width * 0.025),
           );
         }

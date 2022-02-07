@@ -8,11 +8,9 @@ import 'package:pseudofiles/widgets/file_list_tile.dart';
 class RecentFiles extends StatelessWidget {
   const RecentFiles({
     Key? key,
-    required this.manager,
     required this.count,
     this.scroll = false,
   }) : super(key: key);
-  final FileManager manager;
   final int count;
   final bool scroll;
 
@@ -20,7 +18,7 @@ class RecentFiles extends StatelessWidget {
   Widget build(BuildContext context) {
     final ScrollController controller = ScrollController();
     return FutureBuilder(
-      future: manager.getRecentFiles(count),
+      future: FileManager.getRecentFiles(count),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List paths = snapshot.data as List;
@@ -41,7 +39,6 @@ class RecentFiles extends StatelessWidget {
                 File file = File(paths[index]);
                 return FileListTile(
                   entity: file,
-                  manager: manager,
                   oneTapAction: (FileSystemEntity entity) =>
                       OpenFile.open(entity.path),
                   longPressAction: (FileSystemEntity entity) {},

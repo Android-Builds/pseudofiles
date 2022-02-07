@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:isolate';
 import 'dart:math';
 import 'package:path/path.dart' as path;
 
@@ -12,57 +11,45 @@ import 'package:path_provider/path_provider.dart';
 import 'package:pseudofiles/classes/enums/media_enum.dart';
 import 'package:pseudofiles/classes/enums/operation_enum.dart';
 
-enum sortTypes { name, date, size, type }
+import 'enums/sort_types.dart';
 
 class FileManager {
-  static bool _showHidden = false;
-  static bool _descending = false;
-  final GlobalKey<ScaffoldState> _globalKey = GlobalKey();
-  static sortTypes _sortType = sortTypes.name;
+  static bool showHidden = false;
+  static bool descending = false;
+  static final GlobalKey<ScaffoldState> _globalKey = GlobalKey();
+  static sortTypes sortType = sortTypes.name;
   static final ValueNotifier<String> _currentPath = ValueNotifier<String>('');
   static final ValueNotifier<String> _speed = ValueNotifier<String>('0 Mb/s');
   static final ValueNotifier<String> _taskFile = ValueNotifier<String>('none');
-  static OperationType _operationType = OperationType.none;
-  final ValueNotifier<List<FileSystemEntity>> _selectedFiles =
+  static OperationType operationType = OperationType.none;
+  static final ValueNotifier<List<FileSystemEntity>> _selectedFiles =
       ValueNotifier<List<FileSystemEntity>>([]);
-  final ValueNotifier<List<FileSystemEntity>> _selectedFilesForOperation =
-      ValueNotifier<List<FileSystemEntity>>([]);
-  final platform = const MethodChannel('pseudoFiles');
-  static ScrollController _dashBoardScrollController = ScrollController();
-  static ScrollController _storagePageScrollController = ScrollController();
+  static final ValueNotifier<List<FileSystemEntity>>
+      _selectedFilesForOperation = ValueNotifier<List<FileSystemEntity>>([]);
+  static const platform = MethodChannel('pseudoFiles');
+  static final ScrollController _dashBoardScrollController = ScrollController();
+  static final ScrollController _storagePageScrollController =
+      ScrollController();
 
-  sortTypes get sortType => _sortType;
-  set sortType(sortTypes type) => _sortType = type;
+  static GlobalKey<ScaffoldState> get globalKey => _globalKey;
 
-  bool get showHidden => _showHidden;
-  set showHidden(bool value) => _showHidden = value;
-
-  bool get descending => _descending;
-  set descending(bool value) => _descending = value;
-
-  GlobalKey<ScaffoldState> get globalKey => _globalKey;
-
-  ValueNotifier<String> get currentPath => _currentPath;
-  ValueNotifier<String> get taskFile => _taskFile;
-  ValueNotifier<String> get speed => _speed;
-  ValueNotifier<List<FileSystemEntity>> get selectedFiles => _selectedFiles;
-  ValueNotifier<List<FileSystemEntity>> get selectedFilesForOperation =>
+  static ValueNotifier<String> get currentPath => _currentPath;
+  static ValueNotifier<String> get taskFile => _taskFile;
+  static ValueNotifier<String> get speed => _speed;
+  static ValueNotifier<List<FileSystemEntity>> get selectedFiles =>
+      _selectedFiles;
+  static ValueNotifier<List<FileSystemEntity>> get selectedFilesForOperation =>
       _selectedFilesForOperation;
-
-  set operationType(OperationType operationType) =>
-      _operationType = operationType;
-
-  OperationType get operationType => _operationType;
 
   static getDashBoardScrollController() {
     return _dashBoardScrollController;
   }
 
-  static getStoragePageScrollController() {
+  static ScrollController getStoragePageScrollController() {
     return _storagePageScrollController;
   }
 
-  void reloadPath() {
+  static void reloadPath() {
     if (_currentPath.value.endsWith(Platform.pathSeparator)) {
       _currentPath.value =
           _currentPath.value.substring(0, _currentPath.value.length - 1);
@@ -73,7 +60,7 @@ class FileManager {
     }
   }
 
-  List<String> getDirectoryNames() {
+  static List<String> getDirectoryNames() {
     if (_currentPath.value.isEmpty) {
       return ['Internal'];
     }
@@ -91,11 +78,11 @@ class FileManager {
     return pathSplit;
   }
 
-  String getCurrentDir() {
+  static String getCurrentDir() {
     return getDirectoryNames().last;
   }
 
-  Future<String> getRootDirectory() async {
+  static Future<String> getRootDirectory() async {
     List<Directory> rootDirs = await getRootDirectories();
     if (_currentPath.value.contains('0')) {
       return rootDirs[0].path;
@@ -104,7 +91,7 @@ class FileManager {
     }
   }
 
-  String? getMimeType(String fileName) {
+  static String? getMimeType(String fileName) {
     String? ext = lookupMimeType(fileName);
     return ext != null
         ? (ext.split('/')[0] == 'application'
@@ -113,7 +100,7 @@ class FileManager {
         : ext;
   }
 
-  String getDate(DateTime dateTime) {
+  static String getDate(DateTime dateTime) {
     return DateFormat.yMMMEd().add_jm().format(dateTime);
   }
 
@@ -126,11 +113,11 @@ class FileManager {
   }
 
   //File System Entity operations
-  void createDirectory(String name) {
+  static void createDirectory(String name) {
     Directory(_currentPath.value + Platform.pathSeparator + name).createSync();
   }
 
-  void _deleteAllEntities() {
+  static void _deleteAllEntities() {
     for (var element in _selectedFiles.value) {
       try {
         element.deleteSync();
@@ -141,11 +128,11 @@ class FileManager {
     _selectedFiles.value = List.from(_selectedFiles.value)..clear();
   }
 
-  void createFile(String name) {
+  static void createFile(String name) {
     File(_currentPath.value + Platform.pathSeparator + name).createSync();
   }
 
-  String taskEntityCount() {
+  static String taskEntityCount() {
     int fileLength = _selectedFiles.value.whereType<File>().length;
     int folderLength = _selectedFiles.value.whereType<Directory>().length;
     if (folderLength == 0) {
@@ -157,7 +144,8 @@ class FileManager {
     }
   }
 
-  Future<void> copyDirectory(Directory source, Directory destination) async {
+  static Future<void> copyDirectory(
+      Directory source, Directory destination) async {
     List<FileSystemEntity> enteties = source.listSync(recursive: false);
     for (var entity in enteties) {
       if (entity is Directory) {
@@ -171,11 +159,7 @@ class FileManager {
     }
   }
 
-  void inc(String path) {
-    _taskFile.value = path;
-  }
-
-  Future<void> copyFile(File file, Directory directory) async {
+  static Future<void> copyFile(File file, Directory directory) async {
     _taskFile.value = path.basename(file.path);
     await Future.delayed(const Duration(seconds: 2));
     Stopwatch stopwatch = Stopwatch();
@@ -194,7 +178,7 @@ class FileManager {
     }
   }
 
-  void cutOrCopyFilesAndDirs(OperationType type) async {
+  static void cutOrCopyFilesAndDirs(OperationType type) async {
     _taskFile.value = '1';
     for (var element in _selectedFilesForOperation.value) {
       if (element is Directory) {
@@ -214,7 +198,7 @@ class FileManager {
         List.from(_selectedFiles.value)..clear();
   }
 
-  void deleteEntities() async {
+  static void deleteEntities() async {
     _taskFile.value = '1';
     for (var element in _selectedFiles.value) {
       _taskFile.value = path.basename(element.path);
@@ -227,19 +211,19 @@ class FileManager {
   }
 
   //
-  bool isFile(FileSystemEntity entity) {
+  static bool isFile(FileSystemEntity entity) {
     return entity is File;
   }
 
-  bool shouldGetHiddenFiles(FileSystemEntity entity) {
-    if (_showHidden) {
+  static bool shouldGetHiddenFiles(FileSystemEntity entity) {
+    if (showHidden) {
       return true;
     } else {
-      return getFileName(entity).startsWith('.') && !_showHidden;
+      return getFileName(entity).startsWith('.') && !showHidden;
     }
   }
 
-  String getEntityCount(int count) {
+  static String getEntityCount(int count) {
     switch (count) {
       case 0:
         return 'Empty';
@@ -250,7 +234,7 @@ class FileManager {
     }
   }
 
-  String getSize(int bytes) {
+  static String getSize(int bytes) {
     const suffix = ['B', 'KB', 'MB', 'GB', 'TB'];
     int size = bytes;
     if (bytes != 0) {
@@ -266,11 +250,11 @@ class FileManager {
   }
 
   //Methods to move between directories
-  Future<void> goToRootDirectory() async {
+  static Future<void> goToRootDirectory() async {
     changeDirectory((await getRootDirectory()));
   }
 
-  Future<bool> isRootDirectory() async {
+  static Future<bool> isRootDirectory() async {
     return (await getRootDirectories()).any((element) {
       return _currentPath.value
           .split(Platform.pathSeparator)
@@ -280,17 +264,17 @@ class FileManager {
     });
   }
 
-  void goToParentDirectory() async {
+  static void goToParentDirectory() async {
     if (!(await isRootDirectory())) {
       changeDirectory(Directory(_currentPath.value).parent.path);
     }
   }
 
-  void changeDirectory(String path) {
+  static void changeDirectory(String path) {
     _currentPath.value = path;
   }
 
-  String joinPaths(String basePath, String entityPath) {
+  static String joinPaths(String basePath, String entityPath) {
     return path.join(basePath, entityPath);
   }
 
@@ -323,12 +307,12 @@ class FileManager {
 
   static List<FileSystemEntity> getSortedList(List<FileSystemEntity> files,
       List<FileSystemEntity> folders, sortTypes type) {
-    files.sort((a, b) => getComparisionByCase(type, a, b, _descending));
-    folders.sort((a, b) => getComparisionByCase(type, a, b, _descending));
+    files.sort((a, b) => getComparisionByCase(type, a, b, descending));
+    folders.sort((a, b) => getComparisionByCase(type, a, b, descending));
     return [...folders, ...files];
   }
 
-  Future<List<Directory>> getRootDirectories() async {
+  static Future<List<Directory>> getRootDirectories() async {
     List<Directory> storages = (await getExternalStorageDirectories())!;
     storages =
         storages.map((e) => Directory(e.path.split('Android')[0])).toList();
@@ -385,7 +369,7 @@ class FileManager {
   //   }
   // }
 
-  Future<List<List<FileSystemEntity>>> getEntities() async {
+  static Future<List<List<FileSystemEntity>>> getEntities() async {
     List<FileSystemEntity> directories = [];
     if (_currentPath.value.isEmpty) {
       List<Directory> rootDirectories = await getRootDirectories();
@@ -396,7 +380,7 @@ class FileManager {
     }
     final List<FileSystemEntity> files =
         directories.whereType<File>().toList().where((element) {
-      if (_showHidden) {
+      if (showHidden) {
         return true;
       } else {
         return !getFileName(element).startsWith('.');
@@ -404,7 +388,7 @@ class FileManager {
     }).toList();
     final List<FileSystemEntity> folders =
         directories.whereType<Directory>().toList().where((element) {
-      if (_showHidden) {
+      if (showHidden) {
         return true;
       } else {
         return !getFileName(element).startsWith('.');
@@ -413,22 +397,22 @@ class FileManager {
     return [folders, files];
   }
 
-  Future<String> getFilesAndFolderCount() async {
+  static Future<String> getFilesAndFolderCount() async {
     List<List<FileSystemEntity>> filesAndDirs = await getEntities();
     return '${filesAndDirs[0].length} folders, ${filesAndDirs[1].length} files';
   }
 
-  Future<List<FileSystemEntity>> getDirectories() async {
+  static Future<List<FileSystemEntity>> getDirectories() async {
     List<List<FileSystemEntity>> filesAndDirs = await getEntities();
-    return getSortedList(filesAndDirs[1], filesAndDirs[0], _sortType);
+    return getSortedList(filesAndDirs[1], filesAndDirs[0], sortType);
   }
 
-  List<FileSystemEntity> getAllFiles(String path) {
+  static List<FileSystemEntity> getAllFiles(String path) {
     return Directory(path).listSync();
   }
 
   //Platform Channel Calls
-  Future<String> getDirectorySize(String path) async {
+  static Future<String> getDirectorySize(String path) async {
     try {
       final String result = await platform.invokeMethod(
         'getDirectorySize',
@@ -441,7 +425,7 @@ class FileManager {
     return '';
   }
 
-  Future<Map<dynamic, dynamic>> getStorageInfo() async {
+  static Future<Map<dynamic, dynamic>> getStorageInfo() async {
     try {
       final Map<dynamic, dynamic>? storageMap =
           await platform.invokeMapMethod('getStorageInfo');
@@ -452,7 +436,7 @@ class FileManager {
     return {'': ''};
   }
 
-  Future<dynamic> getAllMedias(MediaType type) async {
+  static Future<dynamic> getAllMedias(MediaType type) async {
     try {
       final List result = await platform
           .invokeListMethod('getAllImages', {'mediaType': type.name}) as List;
@@ -463,7 +447,7 @@ class FileManager {
     return '';
   }
 
-  Future<dynamic> getInstalledApps() async {
+  static Future<dynamic> getInstalledApps() async {
     try {
       final List result =
           await platform.invokeListMethod('getInstalledApps') as List;
@@ -474,7 +458,7 @@ class FileManager {
     return '';
   }
 
-  Future<dynamic> getApkFromStorage() async {
+  static Future<dynamic> getApkFromStorage() async {
     try {
       final dynamic result =
           await platform.invokeListMethod('getApkFromStorage');
@@ -485,7 +469,7 @@ class FileManager {
     return '';
   }
 
-  Future<dynamic> getApkDetails(String path) async {
+  static Future<dynamic> getApkDetails(String path) async {
     try {
       final dynamic result =
           await platform.invokeMapMethod('getApkDetails', {'path': path});
@@ -496,7 +480,7 @@ class FileManager {
     return '';
   }
 
-  Future<dynamic> getMediaSize(MediaType type) async {
+  static Future<dynamic> getMediaSize(MediaType type) async {
     try {
       final dynamic result =
           await platform.invokeMethod('getMediaSize', {'mediaType': type.name});
@@ -507,7 +491,7 @@ class FileManager {
     return '';
   }
 
-  Future<dynamic> getInstalledAppSizes() async {
+  static Future<dynamic> getInstalledAppSizes() async {
     try {
       final dynamic result =
           await platform.invokeMethod('getInstalledAppSizes');
@@ -518,7 +502,7 @@ class FileManager {
     return '';
   }
 
-  Future<dynamic> getRecentFiles(int limit) async {
+  static Future<dynamic> getRecentFiles(int limit) async {
     try {
       final dynamic result =
           await platform.invokeMethod('getRecentFiles', {'limit': limit});

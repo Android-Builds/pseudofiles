@@ -9,8 +9,7 @@ import 'package:pseudofiles/utils/constants.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 class VideosPage extends StatefulWidget {
-  const VideosPage({Key? key, required this.manager}) : super(key: key);
-  final FileManager manager;
+  const VideosPage({Key? key}) : super(key: key);
 
   @override
   _VideosPageState createState() => _VideosPageState();
@@ -34,7 +33,7 @@ class _VideosPageState extends State<VideosPage> {
         title: const Text('Videos'),
       ),
       body: FutureBuilder(
-        future: widget.manager.getAllMedias(MediaType.video),
+        future: FileManager.getAllMedias(MediaType.video),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List videoList = snapshot.data as List;

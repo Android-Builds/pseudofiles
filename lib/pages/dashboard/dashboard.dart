@@ -9,13 +9,8 @@ import '../../widgets/category_list.dart';
 import '../../widgets/recent_files.dart';
 
 class DashBoard extends StatelessWidget {
-  const DashBoard({
-    Key? key,
-    required this.manager,
-    required this.pageController,
-  }) : super(key: key);
+  const DashBoard({Key? key, required this.pageController}) : super(key: key);
 
-  final FileManager manager;
   final PageController pageController;
 
   @override
@@ -28,7 +23,7 @@ class DashBoard extends StatelessWidget {
               onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SettingsHome(),
+                    builder: (context) => const SettingsHome(),
                   )),
               icon: const Icon(Icons.settings))
         ],
@@ -36,7 +31,7 @@ class DashBoard extends StatelessWidget {
       body: ListView(
         controller: FileManager.getDashBoardScrollController(),
         children: [
-          StorageDetails(manager: manager),
+          const StorageDetails(),
           const ListTile(
             dense: true,
             title: Text(
@@ -44,10 +39,7 @@ class DashBoard extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          CategoryList(
-            manager: manager,
-            pageController: pageController,
-          ),
+          CategoryList(pageController: pageController),
           ListTile(
             dense: true,
             title: const Text(
@@ -58,7 +50,7 @@ class DashBoard extends StatelessWidget {
               onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RecentFilesPage(manager: manager),
+                    builder: (context) => const RecentFilesPage(),
                   )),
               child: Text(
                 'See More',
@@ -66,7 +58,7 @@ class DashBoard extends StatelessWidget {
               ),
             ),
           ),
-          RecentFiles(manager: manager, count: 10),
+          const RecentFiles(count: 10),
           //StorageList(manager: manager),
         ],
       ),

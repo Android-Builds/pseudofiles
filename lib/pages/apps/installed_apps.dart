@@ -3,8 +3,7 @@ import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/utils/constants.dart';
 
 class InstalledApps extends StatefulWidget {
-  const InstalledApps({Key? key, required this.manager}) : super(key: key);
-  final FileManager manager;
+  const InstalledApps({Key? key}) : super(key: key);
 
   @override
   State<InstalledApps> createState() => _InstalledAppsState();
@@ -16,7 +15,7 @@ class _InstalledAppsState extends State<InstalledApps> {
   Future<dynamic> getApps() async {
     await Future.delayed(const Duration(seconds: 2), () async {});
     if (allApps.isEmpty) {
-      allApps = await widget.manager.getInstalledApps();
+      allApps = await FileManager.getInstalledApps();
     }
     return allApps;
   }

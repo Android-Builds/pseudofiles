@@ -9,8 +9,7 @@ import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/widgets/apk_icon.dart';
 
 class ApksList extends StatefulWidget {
-  const ApksList({Key? key, required this.manager}) : super(key: key);
-  final FileManager manager;
+  const ApksList({Key? key}) : super(key: key);
 
   @override
   State<ApksList> createState() => _ApksListState();
@@ -23,7 +22,7 @@ class _ApksListState extends State<ApksList> {
   Future<dynamic> getApps() async {
     await Future.delayed(const Duration(seconds: 2), () async {});
     if (allApps.isEmpty) {
-      allApps = await widget.manager.getApkFromStorage();
+      allApps = await FileManager.getApkFromStorage();
       for (var element in allApps) {
         allAPKs.add(APK(element, Uint8List.fromList([])));
       }
@@ -54,7 +53,6 @@ class _ApksListState extends State<ApksList> {
               return ListTile(
                 onTap: () async => await OpenFile.open(file.path),
                 leading: AppIcon(
-                  manager: widget.manager,
                   path: apps[index].path,
                   apk: apps[index],
                 ),
@@ -63,11 +61,11 @@ class _ApksListState extends State<ApksList> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      widget.manager.getSize(fileStat.size),
+                      FileManager.getSize(fileStat.size),
                       style: subtytleStyle,
                     ),
                     Text(
-                      widget.manager.getDate(fileStat.modified),
+                      FileManager.getDate(fileStat.modified),
                       style: subtytleStyle,
                     ),
                   ],

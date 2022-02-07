@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/pages/apps/apks_list.dart';
-import 'package:pseudofiles/widgets/app_bar.dart';
 import 'package:pseudofiles/pages/apps/installed_apps.dart';
 
 final List<String> _tabs = ['Installed', 'APKs'];
 
 class AppsPage extends StatelessWidget {
-  const AppsPage({Key? key, required this.manager}) : super(key: key);
-
-  final FileManager manager;
+  const AppsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +24,9 @@ class AppsPage extends StatelessWidget {
                     tabs: _tabs.map((String key) => Tab(text: key)).toList())),
           ),
         ),
-        body: TabBarView(children: [
-          InstalledApps(manager: manager),
-          ApksList(manager: manager),
+        body: const TabBarView(children: [
+          InstalledApps(),
+          ApksList(),
         ]),
       ),
     );

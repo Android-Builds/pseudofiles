@@ -8,8 +8,7 @@ import 'package:pseudofiles/widgets/directory_list_tile.dart';
 import 'package:pseudofiles/widgets/file_list_tile.dart';
 
 class ActionButtonsBar extends StatefulWidget {
-  const ActionButtonsBar({Key? key, required this.manager}) : super(key: key);
-  final FileManager manager;
+  const ActionButtonsBar({Key? key}) : super(key: key);
 
   @override
   _ActionButtonsBarState createState() => _ActionButtonsBarState();
@@ -26,14 +25,12 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
           content: SingleChildScrollView(
             child: ListBody(
               children: List.generate(
-                  widget.manager.selectedFilesForOperation.value.length,
-                  (index) {
+                  FileManager.selectedFilesForOperation.value.length, (index) {
                 List<FileSystemEntity> list =
-                    widget.manager.selectedFilesForOperation.value;
+                    FileManager.selectedFilesForOperation.value;
                 if (list[index] is File) {
                   return FileListTile(
                     entity: list[index],
-                    manager: widget.manager,
                     oneTapAction: (value) {},
                     longPressAction: (value) {},
                     showColor: false,
@@ -41,7 +38,6 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
                 } else {
                   return DirectoryListTile(
                     entity: list[index],
-                    manager: widget.manager,
                     oneTapAction: (value) {},
                     longPressAction: (value) {},
                     showColor: false,
@@ -68,7 +64,7 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-              'Delete ${widget.manager.getEntityCount(widget.manager.selectedFiles.value.length)}'),
+              'Delete ${FileManager.getEntityCount(FileManager.selectedFiles.value.length)}'),
           content: SingleChildScrollView(
             child: ListBody(
               children: const <Widget>[
@@ -86,10 +82,10 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
             TextButton(
               child: const Text('Ok'),
               onPressed: () {
-                widget.manager.operationType = OperationType.delete;
-                widget.manager.deleteEntities();
+                FileManager.operationType = OperationType.delete;
+                FileManager.deleteEntities();
                 Navigator.of(context).pop();
-                widget.manager.reloadPath();
+                FileManager.reloadPath();
               },
             ),
           ],
@@ -101,7 +97,7 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-        valueListenable: widget.manager.selectedFilesForOperation,
+        valueListenable: FileManager.selectedFilesForOperation,
         builder: (context, value, child) {
           List<FileSystemEntity> list = value as List<FileSystemEntity>;
           return Container(
@@ -118,8 +114,8 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
                   ? Row(
                       children: [
                         navBarIcon(Icons.paste, () {
-                          widget.manager.cutOrCopyFilesAndDirs(
-                              widget.manager.operationType);
+                          FileManager.cutOrCopyFilesAndDirs(
+                              FileManager.operationType);
                         }),
                         navBarIcon(Icons.create_new_folder_outlined, () {}),
                         navBarIcon(Icons.task, () {
@@ -132,36 +128,36 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         navBarIcon(Icons.copy, () {
-                          widget.manager.operationType = OperationType.copye;
-                          widget.manager.selectedFilesForOperation.value =
-                              List.from(widget.manager.selectedFiles.value);
+                          FileManager.operationType = OperationType.copye;
+                          FileManager.selectedFilesForOperation.value =
+                              List.from(FileManager.selectedFiles.value);
                         }),
                         navBarIcon(Icons.cut, () {
-                          widget.manager.operationType = OperationType.move;
-                          widget.manager.selectedFilesForOperation.value =
-                              List.from(widget.manager.selectedFiles.value);
+                          FileManager.operationType = OperationType.move;
+                          FileManager.selectedFilesForOperation.value =
+                              List.from(FileManager.selectedFiles.value);
                         }),
                         navBarIcon(Icons.delete, () {
                           confirmDeleteDialog();
                         }),
-                        widget.manager.selectedFiles.value.length == 1
+                        FileManager.selectedFiles.value.length == 1
                             ? navBarIcon(Icons.edit, () {})
                             : const SizedBox.shrink(),
                         navBarIcon(Icons.share, () {}),
                         navBarIcon(Icons.select_all, () async {
                           List<FileSystemEntity> list =
-                              await widget.manager.getDirectories();
-                          if (widget.manager.selectedFiles.value.length ==
+                              await FileManager.getDirectories();
+                          if (FileManager.selectedFiles.value.length ==
                               list.length) {
-                            widget.manager.selectedFiles.value =
-                                List.from(widget.manager.selectedFiles.value)
+                            FileManager.selectedFiles.value =
+                                List.from(FileManager.selectedFiles.value)
                                   ..clear();
                           } else {
-                            widget.manager.selectedFiles.value =
-                                List.from(widget.manager.selectedFiles.value)
+                            FileManager.selectedFiles.value =
+                                List.from(FileManager.selectedFiles.value)
                                   ..clear();
-                            widget.manager.selectedFiles.value =
-                                List.from(widget.manager.selectedFiles.value)
+                            FileManager.selectedFiles.value =
+                                List.from(FileManager.selectedFiles.value)
                                   ..addAll(list);
                           }
                         }),

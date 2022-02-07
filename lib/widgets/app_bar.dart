@@ -10,11 +10,9 @@ import 'menu.dart';
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({
     Key? key,
-    required this.manager,
     this.bottom,
     this.height = kToolbarHeight,
   }) : super(key: key);
-  final FileManager manager;
   final PreferredSizeWidget? bottom;
   final double height;
   static bool isOpen = true;
@@ -26,7 +24,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         builder: (_, setState) {
           return IconButton(
             icon: ValueListenableBuilder(
-              valueListenable: manager.selectedFiles,
+              valueListenable: FileManager.selectedFiles,
               builder: (context, value, child) {
                 return CustomAnimatedIcon(
                   isOpen: (value as List<FileSystemEntity>).isEmpty,
@@ -36,11 +34,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               },
             ),
             onPressed: () {
-              if (manager.selectedFiles.value.isEmpty) {
-                manager.globalKey.currentState!.openDrawer();
+              if (FileManager.selectedFiles.value.isEmpty) {
+                FileManager.globalKey.currentState!.openDrawer();
               } else {
-                manager.selectedFiles.value = manager.selectedFilesForOperation
-                    .value = List.from(manager.selectedFiles.value)..clear();
+                FileManager.selectedFiles.value =
+                    FileManager.selectedFilesForOperation.value =
+                        List.from(FileManager.selectedFiles.value)..clear();
                 setState(() => isOpen = !isOpen);
               }
             },
@@ -48,13 +47,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         },
       ),
       title: ValueListenableBuilder(
-        valueListenable: manager.currentPath,
+        valueListenable: FileManager.currentPath,
         builder: (context, value, child) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(manager.getCurrentDir()),
+            Text(FileManager.getCurrentDir()),
             FutureBuilder(
-              future: manager.getFilesAndFolderCount(),
+              future: FileManager.getFilesAndFolderCount(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return Text(
@@ -68,9 +67,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
       ),
-      actions: [
-        Menu(manager: manager),
-      ],
+      actions: const [Menu()],
       bottom: bottom,
     );
   }

@@ -1,13 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:pseudofiles/classes/enums/sort_types.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
-import 'package:pseudofiles/utils/constants.dart';
-import 'package:pseudofiles/utils/themes.dart';
 
 class Menu extends StatefulWidget {
-  const Menu({Key? key, required this.manager}) : super(key: key);
-  final FileManager manager;
+  const Menu({Key? key}) : super(key: key);
 
   @override
   State<Menu> createState() => _MenuState();
@@ -17,16 +15,17 @@ class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: widget.manager.selectedFiles,
+      valueListenable: FileManager.selectedFiles,
       builder: (context, value, child) {
         List<FileSystemEntity> list = value as List<FileSystemEntity>;
-        return selected();
+        return selected(list.isEmpty);
       },
     );
   }
 
-  Widget selected() {
+  Widget selected(bool isEnabled) {
     return PopupMenuButton(
+      enabled: isEnabled,
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -51,11 +50,11 @@ class _MenuState extends State<Menu> {
         menuItem(StatefulBuilder(
             builder: (context, setState) => InkWell(
                   onTap: () async {
-                    setState(() =>
-                        widget.manager.descending = !widget.manager.descending);
+                    setState(
+                        () => FileManager.descending = !FileManager.descending);
                     await Future.delayed(const Duration(milliseconds: 200));
                     Navigator.pop(context);
-                    widget.manager.reloadPath();
+                    FileManager.reloadPath();
                   },
                   child: Padding(
                       padding: const EdgeInsets.only(left: 15.0),
@@ -66,7 +65,7 @@ class _MenuState extends State<Menu> {
                           Checkbox(
                             materialTapTargetSize:
                                 MaterialTapTargetSize.shrinkWrap,
-                            value: widget.manager.descending,
+                            value: FileManager.descending,
                             onChanged: null,
                           )
                         ],
@@ -75,11 +74,11 @@ class _MenuState extends State<Menu> {
         menuItem(StatefulBuilder(
             builder: (context, setState) => InkWell(
                   onTap: () async {
-                    setState(() =>
-                        widget.manager.showHidden = !widget.manager.showHidden);
+                    setState(
+                        () => FileManager.showHidden = !FileManager.showHidden);
                     await Future.delayed(const Duration(milliseconds: 200));
                     Navigator.pop(context);
-                    widget.manager.reloadPath();
+                    FileManager.reloadPath();
                   },
                   child: Padding(
                       padding: const EdgeInsets.only(left: 15.0),
@@ -90,7 +89,7 @@ class _MenuState extends State<Menu> {
                           Checkbox(
                             materialTapTargetSize:
                                 MaterialTapTargetSize.shrinkWrap,
-                            value: widget.manager.showHidden,
+                            value: FileManager.showHidden,
                             onChanged: null,
                           )
                         ],
@@ -110,11 +109,11 @@ class _MenuState extends State<Menu> {
         RadioListTile(
           value: type,
           title: Text('${type.name[0].toUpperCase()}${type.name.substring(1)}'),
-          groupValue: widget.manager.sortType,
+          groupValue: FileManager.sortType,
           onChanged: (sortTypes? value) {
-            setState(() => widget.manager.sortType = value!);
+            setState(() => FileManager.sortType = value!);
             Navigator.pop(context);
-            widget.manager.reloadPath();
+            FileManager.reloadPath();
           },
         ),
       );

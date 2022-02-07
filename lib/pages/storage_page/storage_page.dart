@@ -6,14 +6,12 @@ import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/pages/storage_page/files_page.dart';
 import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
-import 'package:pseudofiles/widgets/app_bar.dart';
 import 'package:pseudofiles/widgets/app_drawer.dart';
 import 'package:pseudofiles/widgets/floating_button_menu.dart';
 import 'package:pseudofiles/widgets/ongoing_task_overlay.dart';
 
 class StoragePage extends StatefulWidget {
-  const StoragePage({Key? key, required this.manager}) : super(key: key);
-  final FileManager manager;
+  const StoragePage({Key? key}) : super(key: key);
 
   @override
   State<StoragePage> createState() => _StoragePageState();
@@ -76,9 +74,9 @@ class _StoragePageState extends State<StoragePage> {
                 child: const Text('Ok'),
                 onPressed: () {
                   if (type == 'file') {
-                    widget.manager.createFile(controller.text);
+                    FileManager.createFile(controller.text);
                   } else {
-                    widget.manager.createDirectory(controller.text);
+                    FileManager.createDirectory(controller.text);
                   }
                   controller.clear();
                   Navigator.of(context).pop();
@@ -104,26 +102,26 @@ class _StoragePageState extends State<StoragePage> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      key: widget.manager.globalKey,
+      key: FileManager.globalKey,
       drawer: const AppDrawer(),
       body: ValueListenableBuilder(
-        valueListenable: widget.manager.taskFile,
+        valueListenable: FileManager.taskFile,
         builder: (context, value, child) {
           if (value == 'none') {
             return Stack(
               alignment: Alignment.center,
-              children: [
-                FilesPage(manager: widget.manager),
-                const SizedBox.shrink(),
+              children: const [
+                FilesPage(),
+                SizedBox.shrink(),
               ],
             );
           } else {
             return Stack(
-              children: [
-                AbsorbPointer(child: FilesPage(manager: widget.manager)),
+              children: const [
+                AbsorbPointer(child: FilesPage()),
                 Align(
                   alignment: Alignment.center,
-                  child: OngoingTaskOverlay(manager: widget.manager),
+                  child: OngoingTaskOverlay(),
                 ),
               ],
             );
@@ -131,7 +129,7 @@ class _StoragePageState extends State<StoragePage> {
         },
       ),
       floatingActionButton: ValueListenableBuilder(
-          valueListenable: widget.manager.selectedFiles,
+          valueListenable: FileManager.selectedFiles,
           builder: (context, value, child) {
             List<FileSystemEntity> list = value as List<FileSystemEntity>;
             return list.isEmpty

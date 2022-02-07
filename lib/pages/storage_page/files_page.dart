@@ -5,9 +5,7 @@ import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/pages/storage_page/flie_system_list.dart';
 
 class FilesPage extends StatefulWidget {
-  const FilesPage({Key? key, required this.manager}) : super(key: key);
-
-  final FileManager manager;
+  const FilesPage({Key? key}) : super(key: key);
 
   @override
   _FilesPageState createState() => _FilesPageState();
@@ -17,8 +15,8 @@ class _FilesPageState extends State<FilesPage> {
   static bool isFirst = true;
 
   Future<bool> _onWillPop() async {
-    if (!(await widget.manager.isRootDirectory())) {
-      widget.manager.goToParentDirectory();
+    if (!(await FileManager.isRootDirectory())) {
+      FileManager.goToParentDirectory();
     } else {
       return (await showDialog(
         context: context,
@@ -57,7 +55,7 @@ class _FilesPageState extends State<FilesPage> {
       await Future.delayed(const Duration(milliseconds: 1000));
       isFirst = false;
     }
-    return widget.manager.getDirectories();
+    return FileManager.getDirectories();
   }
 
   @override
@@ -69,7 +67,7 @@ class _FilesPageState extends State<FilesPage> {
           setState(() {});
         },
         child: ValueListenableBuilder(
-          valueListenable: widget.manager.currentPath,
+          valueListenable: FileManager.currentPath,
           builder: (BuildContext context, value, Widget? child) {
             return FutureBuilder(
               future: getDirs(),
@@ -77,10 +75,7 @@ class _FilesPageState extends State<FilesPage> {
                 if (snapshot.hasData) {
                   List<FileSystemEntity> list =
                       snapshot.data as List<FileSystemEntity>;
-                  return FileSystemEntityList(
-                    list: list,
-                    manager: widget.manager,
-                  );
+                  return FileSystemEntityList(list: list);
                 }
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());

@@ -8,11 +8,9 @@ import 'package:pseudofiles/utils/themes.dart';
 class AppIcon extends StatefulWidget {
   const AppIcon({
     Key? key,
-    required this.manager,
     required this.path,
     required this.apk,
   }) : super(key: key);
-  final FileManager manager;
   final String path;
   final APK apk;
 
@@ -23,7 +21,7 @@ class AppIcon extends StatefulWidget {
 class _AppIconState extends State<AppIcon> {
   Future<dynamic> getAppIcon() async {
     if (widget.apk.image.isEmpty) {
-      Map map = await widget.manager.getApkDetails(widget.path);
+      Map map = await FileManager.getApkDetails(widget.path);
       if (map['icon'] != null) {
         widget.apk.image = map['icon'];
       }

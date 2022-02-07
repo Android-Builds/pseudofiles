@@ -15,7 +15,6 @@ class _CustomSwitchState extends State<CustomSwitch>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
-  late Animation<double> _animation;
 
   @override
   void initState() {
@@ -32,11 +31,6 @@ class _CustomSwitchState extends State<CustomSwitch>
       parent: _controller,
       curve: widget.value ? Curves.easeIn : Curves.easeOut,
     ));
-
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeIn,
-    );
   }
 
   @override
@@ -113,7 +107,7 @@ class _CustomSwitchState extends State<CustomSwitch>
                 //   ),
                 // ),
                 Container(
-                  padding: EdgeInsets.all(2.0),
+                  padding: const EdgeInsets.all(2.0),
                   height: 14.0,
                   decoration: BoxDecoration(
                     color: Colors.red,

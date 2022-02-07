@@ -5,11 +5,9 @@ import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/classes/enums/media_enum.dart';
 import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
-import 'package:pseudofiles/widgets/app_bar.dart';
 
 class AudioPage extends StatefulWidget {
-  const AudioPage({Key? key, required this.manager}) : super(key: key);
-  final FileManager manager;
+  const AudioPage({Key? key}) : super(key: key);
 
   @override
   _AudioPageState createState() => _AudioPageState();
@@ -20,7 +18,7 @@ class _AudioPageState extends State<AudioPage> {
 
   Future<dynamic> getSongs() async {
     if (allSongs.isEmpty) {
-      allSongs = await widget.manager.getAllMedias(MediaType.audio);
+      allSongs = await FileManager.getAllMedias(MediaType.audio);
     }
     return allSongs;
   }
@@ -78,11 +76,11 @@ class _AudioPageState extends State<AudioPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              widget.manager.getSize(fileStat.size),
+                              FileManager.getSize(fileStat.size),
                               style: subtitleStyle,
                             ),
                             Text(
-                              widget.manager.getDate(fileStat.modified),
+                              FileManager.getDate(fileStat.modified),
                               style: subtitleStyle,
                             ),
                           ],

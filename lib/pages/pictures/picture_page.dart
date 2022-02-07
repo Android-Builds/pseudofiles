@@ -7,8 +7,7 @@ import 'package:pseudofiles/pages/pictures/pictures_grid_page.dart';
 import 'package:pseudofiles/utils/constants.dart';
 
 class PicturesPage extends StatefulWidget {
-  const PicturesPage({Key? key, required this.manager}) : super(key: key);
-  final FileManager manager;
+  const PicturesPage({Key? key}) : super(key: key);
 
   @override
   _PicturesPageState createState() => _PicturesPageState();
@@ -20,7 +19,7 @@ class _PicturesPageState extends State<PicturesPage> {
   Future<dynamic> getImages() async {
     await Future.delayed(const Duration(seconds: 2), () async {});
     if (allImages.isEmpty) {
-      allImages = await widget.manager.getAllMedias(MediaType.image);
+      allImages = await FileManager.getAllMedias(MediaType.image);
     }
     return allImages;
   }

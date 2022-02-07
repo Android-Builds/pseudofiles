@@ -14,14 +14,12 @@ class FileListTile extends StatelessWidget {
   const FileListTile({
     Key? key,
     required this.entity,
-    required this.manager,
     required this.oneTapAction,
     required this.longPressAction,
     this.showColor = true,
   }) : super(key: key);
 
   final FileSystemEntity entity;
-  final FileManager manager;
   final Function oneTapAction;
   final Function longPressAction;
   final bool showColor;
@@ -74,7 +72,6 @@ class FileListTile extends StatelessWidget {
     switch (type) {
       case 'vnd.android.package-archive':
         return AppIcon(
-          manager: manager,
           path: entity.path,
           apk: APK(entity.path, Uint8List.fromList([])),
         );
@@ -100,23 +97,23 @@ class FileListTile extends StatelessWidget {
     FileStat fileStat = entity.statSync();
     return ListTile(
       tileColor: showColor &&
-              manager.selectedFiles.value
+              FileManager.selectedFiles.value
                   .any((element) => element.path == entity.path)
           ? accentColor.withOpacity(0.2)
           : null,
       onLongPress: () => longPressAction(entity),
       onTap: () => oneTapAction(entity),
-      leading: getLeadingIcon(context, manager.getMimeType(entity.path)),
+      leading: getLeadingIcon(context, FileManager.getMimeType(entity.path)),
       title: Text(FileManager.getFileName(entity)),
       subtitle: Row(
         children: [
           Text(
-            manager.getSize(fileStat.size),
+            FileManager.getSize(fileStat.size),
             style: TextStyle(fontSize: size.width * 0.025),
           ),
           const Spacer(),
           Text(
-            manager.getDate(fileStat.modified),
+            FileManager.getDate(fileStat.modified),
             style: TextStyle(fontSize: size.width * 0.025),
           )
         ],

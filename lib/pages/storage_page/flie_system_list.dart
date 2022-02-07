@@ -11,26 +11,21 @@ import '../../widgets/file_list_tile.dart';
 import '../../widgets/persistant_header.dart';
 
 class FileSystemEntityList extends StatefulWidget {
-  const FileSystemEntityList({
-    Key? key,
-    required this.list,
-    required this.manager,
-  }) : super(key: key);
+  const FileSystemEntityList({Key? key, required this.list}) : super(key: key);
 
   final List<FileSystemEntity> list;
-  final FileManager manager;
 
   @override
   State<FileSystemEntityList> createState() => _FileSystemEntityListState();
 }
 
 class _FileSystemEntityListState extends State<FileSystemEntityList> {
-  //List<FileSystemEntity> widget.manager.selectedFiles = [];
+  //List<FileSystemEntity> FileManagerr.selectedFiles = [];
   late ScrollController scrollController;
 
   void selectedFilesListener() {
-    if (widget.manager.selectedFiles.value.isEmpty ||
-        widget.manager.selectedFiles.value.isNotEmpty) {
+    if (FileManager.selectedFiles.value.isEmpty ||
+        FileManager.selectedFiles.value.isNotEmpty) {
       setState(() {});
     }
   }
@@ -49,16 +44,16 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
 
   @override
   void initState() {
-    widget.manager.selectedFiles.addListener(selectedFilesListener);
+    FileManager.selectedFiles.addListener(selectedFilesListener);
     scrollController = ScrollController();
-    widget.manager.currentPath.addListener(currentPathListener);
+    FileManager.currentPath.addListener(currentPathListener);
     super.initState();
   }
 
   @override
   void dispose() {
-    widget.manager.selectedFiles.removeListener(selectedFilesListener);
-    widget.manager.currentPath.removeListener(currentPathListener);
+    FileManager.selectedFiles.removeListener(selectedFilesListener);
+    FileManager.currentPath.removeListener(currentPathListener);
     super.dispose();
   }
 
@@ -67,34 +62,33 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
   }
 
   void selectOrRemoveEntity(FileSystemEntity entity) {
-    if (presentInList(widget.manager.selectedFiles.value, entity)) {
-      widget.manager.selectedFiles.value =
-          List.from(widget.manager.selectedFiles.value)
+    if (presentInList(FileManager.selectedFiles.value, entity)) {
+      FileManager.selectedFiles.value =
+          List.from(FileManager.selectedFiles.value)
             ..removeWhere((element) => element.path == entity.path);
     } else {
-      widget.manager.selectedFiles.value =
-          List.from(widget.manager.selectedFiles.value)..add(entity);
+      FileManager.selectedFiles.value =
+          List.from(FileManager.selectedFiles.value)..add(entity);
     }
   }
 
   void openEntity(FileSystemEntity entity) async {
     if (entity is Directory) {
-      widget.manager.changeDirectory(entity.path);
+      FileManager.changeDirectory(entity.path);
     } else {
       await OpenFile.open(entity.path);
     }
   }
 
   void oneTapAction(FileSystemEntity entity) async {
-    if (widget.manager.selectedFilesForOperation.value.isNotEmpty) {
-      if (presentInList(
-          widget.manager.selectedFilesForOperation.value, entity)) {
+    if (FileManager.selectedFilesForOperation.value.isNotEmpty) {
+      if (presentInList(FileManager.selectedFilesForOperation.value, entity)) {
         return;
       } else {
         openEntity(entity);
       }
     } else {
-      if (widget.manager.selectedFiles.value.isNotEmpty) {
+      if (FileManager.selectedFiles.value.isNotEmpty) {
         selectOrRemoveEntity(entity);
       } else {
         openEntity(entity);
@@ -104,10 +98,10 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
   }
 
   void longPressAction(FileSystemEntity entity) {
-    if (widget.manager.selectedFilesForOperation.value.isEmpty &&
-        widget.manager.selectedFiles.value.isEmpty) {
-      widget.manager.selectedFiles.value =
-          List.from(widget.manager.selectedFiles.value)..add(entity);
+    if (FileManager.selectedFilesForOperation.value.isEmpty &&
+        FileManager.selectedFiles.value.isEmpty) {
+      FileManager.selectedFiles.value =
+          List.from(FileManager.selectedFiles.value)..add(entity);
     } else {
       return;
     }
@@ -120,10 +114,7 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
       controller: FileManager.getStoragePageScrollController(),
       slivers: [
         SliverPersistentHeader(
-            delegate: PersistentHeader(
-                widget: CustomAppBar(
-          manager: widget.manager,
-        ))),
+            delegate: PersistentHeader(widget: const CustomAppBar())),
         SliverPersistentHeader(
           pinned: true,
           delegate: PersistentHeader(
@@ -136,7 +127,7 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
                 shrinkWrap: true,
                 controller: scrollController,
                 scrollDirection: Axis.horizontal,
-                itemCount: widget.manager.getDirectoryNames().length,
+                itemCount: FileManager.getDirectoryNames().length,
                 itemBuilder: (context, index) {
                   if (scrollController.positions.last.hasContentDimensions &&
                       scrollController.offset <
@@ -151,27 +142,27 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
                     children: [
                       TextButton(
                         onPressed: () {
-                          if (widget.manager.getDirectoryNames()[index] ==
+                          if (FileManager.getDirectoryNames()[index] ==
                                   'Internal' ||
-                              widget.manager.getDirectoryNames()[index] ==
+                              FileManager.getDirectoryNames()[index] ==
                                   'SD Card') {
-                            widget.manager.goToRootDirectory();
+                            FileManager.goToRootDirectory();
                           } else {
-                            widget.manager.goToParentDirectory();
+                            FileManager.goToParentDirectory();
                           }
                         },
                         child: Text(
-                          widget.manager.getDirectoryNames()[index],
+                          FileManager.getDirectoryNames()[index],
                           style: TextStyle(
-                            color: widget.manager.getDirectoryNames()[index] ==
-                                    widget.manager.getCurrentDir()
+                            color: FileManager.getDirectoryNames()[index] ==
+                                    FileManager.getCurrentDir()
                                 ? accentColor
                                 : Theme.of(context).textTheme.bodyText1!.color,
                             fontSize: size.width * 0.04,
                           ),
                         ),
                       ),
-                      index == widget.manager.getDirectoryNames().length - 1
+                      index == FileManager.getDirectoryNames().length - 1
                           ? const SizedBox.shrink()
                           : const Icon(Icons.arrow_right),
                     ],
@@ -187,7 +178,7 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
               if (index == 0) {
                 return ListTile(
                   onTap: () {
-                    widget.manager.goToParentDirectory();
+                    FileManager.goToParentDirectory();
                   },
                   leading: CircleAvatar(
                     backgroundColor: accentColor,
@@ -202,14 +193,12 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
                 if (widget.list[index - 1] is File) {
                   return FileListTile(
                     entity: widget.list[index - 1],
-                    manager: widget.manager,
                     oneTapAction: oneTapAction,
                     longPressAction: longPressAction,
                   );
                 } else {
                   return DirectoryListTile(
                     entity: widget.list[index - 1],
-                    manager: widget.manager,
                     oneTapAction: oneTapAction,
                     longPressAction: longPressAction,
                   );

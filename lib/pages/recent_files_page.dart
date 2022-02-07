@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/widgets/recent_files.dart';
 
 class RecentFilesPage extends StatelessWidget {
-  const RecentFilesPage({Key? key, required this.manager}) : super(key: key);
-  final FileManager manager;
+  const RecentFilesPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,8 +10,7 @@ class RecentFilesPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Recent Files'),
       ),
-      body: RecentFiles(
-        manager: manager,
+      body: const RecentFiles(
         count: -1,
         scroll: true,
       ),

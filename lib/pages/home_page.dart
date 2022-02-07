@@ -17,7 +17,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  FileManager manager = FileManager();
   PageController pageController = PageController();
   ScrollController scrollController = ScrollController();
 
@@ -31,22 +30,19 @@ class _HomePageState extends State<HomePage> {
             physics: const NeverScrollableScrollPhysics(),
             controller: pageController,
             children: [
-              DashBoard(
-                manager: manager,
-                pageController: pageController,
-              ),
-              StoragePage(manager: manager),
+              DashBoard(pageController: pageController),
+              const StoragePage(),
             ],
           ),
           Align(
             alignment: Alignment.bottomCenter,
             child: ValueListenableBuilder(
-              valueListenable: manager.selectedFiles,
+              valueListenable: FileManager.selectedFiles,
               builder: (context, value, child) {
                 List<FileSystemEntity> list = value as List<FileSystemEntity>;
                 return list.isEmpty
                     ? NavBarBottom(pageController: pageController)
-                    : ActionButtonsBar(manager: manager);
+                    : const ActionButtonsBar();
               },
             ),
           )

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pseudofiles/classes/categories.dart';
@@ -14,12 +12,7 @@ import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
 
 class CategoryList extends StatelessWidget {
-  CategoryList({
-    Key? key,
-    required this.manager,
-    required this.pageController,
-  }) : super(key: key);
-  final FileManager manager;
+  CategoryList({Key? key, required this.pageController}) : super(key: key);
   final PageController pageController;
 
   final List<Category> categories = [];
@@ -29,43 +22,43 @@ class CategoryList extends StatelessWidget {
       Category(
         'download',
         FontAwesomeIcons.fileDownload,
-        StoragePage(manager: manager),
-        manager.getDirectorySize,
+        const StoragePage(),
+        FileManager.getDirectorySize,
         'storage/emulated/0/download',
       ),
       Category(
         'documents',
         FontAwesomeIcons.folderPlus,
-        StoragePage(manager: manager),
-        manager.getDirectorySize,
+        const StoragePage(),
+        FileManager.getDirectorySize,
         'storage/emulated/0/documents',
       ),
       Category(
         'apps',
         FontAwesomeIcons.android,
-        AppsPage(manager: manager),
-        manager.getInstalledAppSizes,
+        const AppsPage(),
+        FileManager.getInstalledAppSizes,
         '',
       ),
       Category(
         'audio',
         Icons.photo_album,
-        AudioPage(manager: manager),
-        manager.getMediaSize,
+        const AudioPage(),
+        FileManager.getMediaSize,
         MediaType.audio,
       ),
       Category(
         'pictures',
         Icons.photo_album,
-        PicturesPage(manager: manager),
-        manager.getMediaSize,
+        const PicturesPage(),
+        FileManager.getMediaSize,
         MediaType.image,
       ),
       Category(
         'video',
         FontAwesomeIcons.video,
-        VideosPage(manager: manager),
-        manager.getMediaSize,
+        const VideosPage(),
+        FileManager.getMediaSize,
         MediaType.video,
       ),
     ]);
@@ -76,7 +69,7 @@ class CategoryList extends StatelessWidget {
     dynamic result = category.argument == ''
         ? await category.getSize()
         : await category.getSize(category.argument);
-    category.size = result is int ? manager.getSize(result) : result;
+    category.size = result is int ? FileManager.getSize(result) : result;
     return category.size;
   }
 
@@ -107,8 +100,8 @@ class CategoryList extends StatelessWidget {
           onTap: () async {
             //manager.getInstalledAppSizes();
             if (index == 0 || index == 1) {
-              manager.changeDirectory(manager.joinPaths(
-                  (await manager.getRootDirectories())[0].path,
+              FileManager.changeDirectory(FileManager.joinPaths(
+                  (await FileManager.getRootDirectories())[0].path,
                   categories[index].name));
               pageController.animateToPage(
                 1,

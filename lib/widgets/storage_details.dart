@@ -4,8 +4,7 @@ import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/widgets/storage_graph.dart';
 
 class StorageDetails extends StatefulWidget {
-  const StorageDetails({Key? key, required this.manager}) : super(key: key);
-  final FileManager manager;
+  const StorageDetails({Key? key}) : super(key: key);
 
   @override
   State<StorageDetails> createState() => _StorageDetailsState();
@@ -19,7 +18,7 @@ class _StorageDetailsState extends State<StorageDetails>
   initTabController() async {
     tabController = TabController(
       initialIndex: 0,
-      length: (await widget.manager.getRootDirectories()).length,
+      length: (await FileManager.getRootDirectories()).length,
       vsync: this,
     );
   }
@@ -33,7 +32,7 @@ class _StorageDetailsState extends State<StorageDetails>
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: widget.manager.getStorageInfo(),
+      future: FileManager.getStorageInfo(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           Map map = snapshot.data as Map;
