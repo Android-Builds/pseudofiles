@@ -106,6 +106,7 @@ public class MediaHelper {
         while (cursor.moveToNext()) {
             size += Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)));
         }
+        //Make this return direct size. Maybe
         return size;
     }
 

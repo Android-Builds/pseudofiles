@@ -98,7 +98,7 @@ public class ApplicationHelper {
 //
 //            }
         }
-        return Formatter.formatShortFileSize(context, size);
+        return Formatter.formatFileSize(context, size);
     }
 
     public List<String> getApkFromStorage() {

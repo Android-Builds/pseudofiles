@@ -15,12 +15,25 @@ class _StorageDetailsState extends State<StorageDetails>
   late TabController tabController;
   int index = 0;
 
-  initTabController() async {
+  void initTabController() async {
     tabController = TabController(
       initialIndex: 0,
       length: (await FileManager.getRootDirectories()).length,
       vsync: this,
     );
+  }
+
+  void saveStorageData(Map map, int index) {
+    double availableStorage = double.parse(
+        map['storage_${index + 1}_Available'].toString().split(' ')[0]);
+    double totalStorage = double.parse(
+        map['storage_${index + 1}_Total'].toString().split(' ')[0]);
+    allStorageMap['storage${index + 1}Free'] =
+        double.parse(availableStorage.toStringAsPrecision(4));
+    allStorageMap['storage${index + 1}Total'] =
+        double.parse(totalStorage.toStringAsPrecision(4));
+    allStorageMap['storage${index + 1}Used'] =
+        double.parse((totalStorage - availableStorage).toStringAsPrecision(4));
   }
 
   @override
@@ -41,7 +54,6 @@ class _StorageDetailsState extends State<StorageDetails>
             height: size.height * 0.35,
             width: size.width,
             decoration: BoxDecoration(
-              //color: Theme.of(context).backgroundColor,
               borderRadius: BorderRadius.circular(20.0),
             ),
             child: Stack(
@@ -50,14 +62,13 @@ class _StorageDetailsState extends State<StorageDetails>
                   onPageChanged: (value) {
                     setState(() => tabController.index = value);
                   },
-                  children: List.generate(
-                      map.keys.length ~/ 2,
-                      (index) => StorageGraph(
-                            available: map['storage_${index + 1}_Available'],
-                            total: map['storage_${index + 1}_Total'],
-                            storage:
-                                index == 0 ? 'Internal \nStorage' : 'SD Card',
-                          )),
+                  children: List.generate(map.keys.length ~/ 2, (index) {
+                    saveStorageData(map, index);
+                    return StorageGraph(
+                      index: index + 1,
+                      storage: index == 0 ? 'Internal \nStorage' : 'SD Card',
+                    );
+                  }),
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,

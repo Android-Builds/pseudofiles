@@ -12,50 +12,49 @@ import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
 
 class CategoryList extends StatelessWidget {
-  CategoryList({Key? key, required this.pageController}) : super(key: key);
+  const CategoryList({Key? key, required this.pageController})
+      : super(key: key);
   final PageController pageController;
-
-  final List<Category> categories = [];
 
   void setCategories() {
     categories.addAll([
       Category(
-        'download',
+        'Download',
         FontAwesomeIcons.fileDownload,
         const StoragePage(),
         FileManager.getDirectorySize,
-        'storage/emulated/0/download',
+        'storage/emulated/0/Download',
       ),
       Category(
-        'documents',
+        'Documents',
         FontAwesomeIcons.folderPlus,
         const StoragePage(),
         FileManager.getDirectorySize,
-        'storage/emulated/0/documents',
+        'storage/emulated/0/Documents',
       ),
       Category(
-        'apps',
+        'Apps',
         FontAwesomeIcons.android,
         const AppsPage(),
         FileManager.getInstalledAppSizes,
         '',
       ),
       Category(
-        'audio',
+        'Audio',
         Icons.photo_album,
         const AudioPage(),
         FileManager.getMediaSize,
         MediaType.audio,
       ),
       Category(
-        'pictures',
+        'Pictures',
         Icons.photo_album,
         const PicturesPage(),
         FileManager.getMediaSize,
         MediaType.image,
       ),
       Category(
-        'video',
+        'Video',
         FontAwesomeIcons.video,
         const VideosPage(),
         FileManager.getMediaSize,
@@ -131,9 +130,7 @@ class CategoryList extends StatelessWidget {
               ),
               const SizedBox(height: 20.0),
               Text(
-                categories[index].name.replaceFirst(
-                    categories[index].name.substring(0, 1),
-                    categories[index].name.substring(0, 1).toUpperCase()),
+                categories[index].name,
                 style: TextStyle(
                   fontSize: size.width * 0.035,
                   fontWeight: FontWeight.bold,

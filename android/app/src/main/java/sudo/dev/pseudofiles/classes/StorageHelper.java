@@ -32,8 +32,8 @@ public class StorageHelper {
             statFs = new StatFs(path.toString());
             availableSizeInBytes = statFs.getAvailableBytes();
             totalSizeInBytes = statFs.getTotalBytes();
-            storageMap.put("storage_"+ index + "_Available", Formatter.formatShortFileSize(context,availableSizeInBytes));
-            storageMap.put("storage_"+ index + "_Total", Formatter.formatShortFileSize(context,totalSizeInBytes));
+            storageMap.put("storage_"+ index + "_Available", Formatter.formatFileSize(context,availableSizeInBytes));
+            storageMap.put("storage_"+ index + "_Total", Formatter.formatFileSize(context,totalSizeInBytes));
             index++;
         }
         return storageMap;
