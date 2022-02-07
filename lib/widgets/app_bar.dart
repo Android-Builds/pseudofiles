@@ -13,48 +13,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.manager,
     this.bottom,
     this.height = kToolbarHeight,
-    required this.globalKey,
   }) : super(key: key);
   final FileManager manager;
   final PreferredSizeWidget? bottom;
   final double height;
-  final GlobalKey<ScaffoldState> globalKey;
   static bool isOpen = true;
-
-  Future<void> _confirmDeleteDialog(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-              'Delete ${manager.getEntityCount(manager.selectedFiles.value.length)}'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('Are you sure you want to delete them permanently ?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Ok'),
-              onPressed: () {
-                manager.deleteEntity();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +37,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             onPressed: () {
               if (manager.selectedFiles.value.isEmpty) {
-                globalKey.currentState!.openDrawer();
+                manager.globalKey.currentState!.openDrawer();
               } else {
                 manager.selectedFiles.value = manager.selectedFilesForOperation
                     .value = List.from(manager.selectedFiles.value)..clear();

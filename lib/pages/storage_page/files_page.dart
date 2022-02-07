@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
-import 'package:pseudofiles/widgets/flie_system_list.dart';
+import 'package:pseudofiles/pages/storage_page/flie_system_list.dart';
 
 class FilesPage extends StatefulWidget {
   const FilesPage({Key? key, required this.manager}) : super(key: key);

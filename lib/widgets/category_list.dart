@@ -8,7 +8,7 @@ import 'package:pseudofiles/classes/enums/media_enum.dart';
 import 'package:pseudofiles/pages/apps/apps_page.dart';
 import 'package:pseudofiles/pages/audio_page.dart';
 import 'package:pseudofiles/pages/pictures/picture_page.dart';
-import 'package:pseudofiles/pages/storage_page.dart';
+import 'package:pseudofiles/pages/storage_page/storage_page.dart';
 import 'package:pseudofiles/pages/videos/videos_page.dart';
 import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';

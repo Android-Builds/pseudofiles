@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
-import 'package:pseudofiles/pages/files_page.dart';
+import 'package:pseudofiles/pages/storage_page/files_page.dart';
 import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
 import 'package:pseudofiles/widgets/app_bar.dart';
@@ -29,7 +29,6 @@ class _StoragePageState extends State<StoragePage> {
   TextEditingController controller = TextEditingController();
   UnderlineInputBorder borderStyle =
       UnderlineInputBorder(borderSide: BorderSide(color: accentColor));
-  final GlobalKey<ScaffoldState> globalKey = GlobalKey();
 
   Future<void> _createFileOrFolderDialog(String type) async {
     return showDialog<void>(
@@ -105,12 +104,8 @@ class _StoragePageState extends State<StoragePage> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      key: globalKey,
+      key: widget.manager.globalKey,
       drawer: const AppDrawer(),
-      appBar: CustomAppBar(
-        manager: widget.manager,
-        globalKey: globalKey,
-      ),
       body: ValueListenableBuilder(
         valueListenable: widget.manager.taskFile,
         builder: (context, value, child) {

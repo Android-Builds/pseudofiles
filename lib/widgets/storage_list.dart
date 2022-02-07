@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
-import 'package:pseudofiles/pages/storage_page.dart';
+import 'package:pseudofiles/pages/storage_page/storage_page.dart';
 import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
 

@@ -17,6 +17,7 @@ enum sortTypes { name, date, size, type }
 class FileManager {
   static bool _showHidden = false;
   static bool _descending = false;
+  final GlobalKey<ScaffoldState> _globalKey = GlobalKey();
   static sortTypes _sortType = sortTypes.name;
   static final ValueNotifier<String> _currentPath = ValueNotifier<String>('');
   static final ValueNotifier<String> _speed = ValueNotifier<String>('0 Mb/s');
@@ -38,6 +39,8 @@ class FileManager {
 
   bool get descending => _descending;
   set descending(bool value) => _descending = value;
+
+  GlobalKey<ScaffoldState> get globalKey => _globalKey;
 
   ValueNotifier<String> get currentPath => _currentPath;
   ValueNotifier<String> get taskFile => _taskFile;
@@ -127,7 +130,7 @@ class FileManager {
     Directory(_currentPath.value + Platform.pathSeparator + name).createSync();
   }
 
-  void deleteEntity() {
+  void _deleteAllEntities() {
     for (var element in _selectedFiles.value) {
       try {
         element.deleteSync();
@@ -204,7 +207,7 @@ class FileManager {
       }
     }
     if (type == OperationType.move) {
-      deleteEntity();
+      _deleteAllEntities();
     }
     _taskFile.value = 'none';
     _selectedFiles.value = _selectedFilesForOperation.value =

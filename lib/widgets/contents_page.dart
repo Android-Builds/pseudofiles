@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pseudofiles/bloc/getFiles_bloc/getfiles_bloc.dart';
 import 'package:pseudofiles/utils/constants.dart';
-import 'package:pseudofiles/widgets/file_list.dart';
+import 'package:pseudofiles/pages/storage_page/file_list.dart';
 
 class ContentsPage extends StatefulWidget {
   const ContentsPage({Key? key}) : super(key: key);

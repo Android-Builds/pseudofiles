@@ -53,6 +53,32 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
           actions: <Widget>[
             TextButton(
               child: const Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> confirmDeleteDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+              'Delete ${widget.manager.getEntityCount(widget.manager.selectedFiles.value.length)}'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('Are you sure you want to delete them permanently ?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -60,8 +86,10 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
             TextButton(
               child: const Text('Ok'),
               onPressed: () {
-                //manager.deleteEntity();
+                widget.manager.operationType = OperationType.delete;
+                widget.manager.deleteEntities();
                 Navigator.of(context).pop();
+                widget.manager.reloadPath();
               },
             ),
           ],
@@ -114,9 +142,7 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
                               List.from(widget.manager.selectedFiles.value);
                         }),
                         navBarIcon(Icons.delete, () {
-                          widget.manager.operationType = OperationType.delete;
-                          widget.manager.deleteEntities();
-                          widget.manager.reloadPath();
+                          confirmDeleteDialog();
                         }),
                         widget.manager.selectedFiles.value.length == 1
                             ? navBarIcon(Icons.edit, () {})
