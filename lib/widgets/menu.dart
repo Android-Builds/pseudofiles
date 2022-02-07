@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/utils/constants.dart';
+import 'package:pseudofiles/utils/themes.dart';
 
 class Menu extends StatefulWidget {
   const Menu({Key? key, required this.manager}) : super(key: key);
@@ -13,154 +14,108 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-  WhyFarther _selection = WhyFarther.harder;
-
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: widget.manager.selectedFiles,
       builder: (context, value, child) {
         List<FileSystemEntity> list = value as List<FileSystemEntity>;
-        return list.isEmpty ? unSelected() : selected();
+        return selected();
       },
     );
   }
 
   Widget selected() {
-    return PopupMenuButton<WhyFarther>(
+    return PopupMenuButton(
+      padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
       ),
-      onSelected: (WhyFarther result) {
-        setState(() {
-          _selection = result;
-        });
-      },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<WhyFarther>>[
-        PopupMenuItem<WhyFarther>(
-          value: WhyFarther.harder,
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(
-                  'Show hidden files',
-                  style: TextStyle(fontSize: size.width * 0.035),
-                ),
-                value: widget.manager.showHidden,
-                onChanged: (value) {
-                  setState(() => widget.manager.showHidden = value!);
-                  widget.manager.reloadPath();
-                  Navigator.pop(context);
-                  // BlocProvider.of<GetfilesBloc>(context)
-                  //     .add(GetAllFiles(rootDir));
-                },
-              );
-            },
+      itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+        menuItem(InkWell(
+          onTap: () {},
+          splashColor: Colors.transparent,
+          child: const ListTile(
+            dense: true,
+            leading: Icon(Icons.sort),
+            title: Text(
+              'Sort Type:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
-        ),
-        PopupMenuItem<WhyFarther>(
-          value: WhyFarther.smarter,
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.sort_by_alpha),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.file_copy),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.format_size),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.calendar_today),
-              ),
-            ],
-          ),
-        ),
-        const PopupMenuItem<WhyFarther>(
-          value: WhyFarther.selfStarter,
-          child: Text('Being a self-starter'),
-        ),
-        const PopupMenuItem<WhyFarther>(
-          value: WhyFarther.tradingCharter,
-          child: Text('Placed'),
-        ),
+        )),
+        sortTypeMenu(sortTypes.name),
+        sortTypeMenu(sortTypes.date),
+        sortTypeMenu(sortTypes.size),
+        sortTypeMenu(sortTypes.type),
+        menuItem(StatefulBuilder(
+            builder: (context, setState) => InkWell(
+                  onTap: () async {
+                    setState(() =>
+                        widget.manager.descending = !widget.manager.descending);
+                    await Future.delayed(const Duration(milliseconds: 200));
+                    Navigator.pop(context);
+                    widget.manager.reloadPath();
+                  },
+                  child: Padding(
+                      padding: const EdgeInsets.only(left: 15.0),
+                      child: Row(
+                        children: [
+                          const Text('Descending'),
+                          const Spacer(),
+                          Checkbox(
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            value: widget.manager.descending,
+                            onChanged: null,
+                          )
+                        ],
+                      )),
+                ))),
+        menuItem(StatefulBuilder(
+            builder: (context, setState) => InkWell(
+                  onTap: () async {
+                    setState(() =>
+                        widget.manager.showHidden = !widget.manager.showHidden);
+                    await Future.delayed(const Duration(milliseconds: 200));
+                    Navigator.pop(context);
+                    widget.manager.reloadPath();
+                  },
+                  child: Padding(
+                      padding: const EdgeInsets.only(left: 15.0),
+                      child: Row(
+                        children: [
+                          const Text('Show Hidden'),
+                          const Spacer(),
+                          Checkbox(
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            value: widget.manager.showHidden,
+                            onChanged: null,
+                          )
+                        ],
+                      )),
+                ))),
       ],
     );
   }
 
-  Widget unSelected() {
-    return PopupMenuButton<WhyFarther>(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      onSelected: (WhyFarther result) {
-        setState(() {
-          _selection = result;
-        });
-      },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<WhyFarther>>[
-        PopupMenuItem<WhyFarther>(
-          value: WhyFarther.harder,
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(
-                  'Show hidden files',
-                  style: TextStyle(fontSize: size.width * 0.035),
-                ),
-                value: widget.manager.showHidden,
-                onChanged: (value) {
-                  setState(() => widget.manager.showHidden = value!);
-                  widget.manager.reloadPath();
-                  Navigator.pop(context);
-                  // BlocProvider.of<GetfilesBloc>(context)
-                  //     .add(GetAllFiles(rootDir));
-                },
-              );
-            },
-          ),
+  PopupMenuItem menuItem(Widget child, [Function()? onTap]) => PopupMenuItem(
+        padding: EdgeInsets.zero,
+        child: child,
+        onTap: onTap,
+      );
+
+  PopupMenuItem sortTypeMenu(sortTypes type) => menuItem(
+        RadioListTile(
+          value: type,
+          title: Text('${type.name[0].toUpperCase()}${type.name.substring(1)}'),
+          groupValue: widget.manager.sortType,
+          onChanged: (sortTypes? value) {
+            setState(() => widget.manager.sortType = value!);
+            Navigator.pop(context);
+            widget.manager.reloadPath();
+          },
         ),
-        PopupMenuItem<WhyFarther>(
-          value: WhyFarther.smarter,
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.sort_by_alpha),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.file_copy),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.format_size),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.calendar_today),
-              ),
-            ],
-          ),
-        ),
-        const PopupMenuItem<WhyFarther>(
-          value: WhyFarther.selfStarter,
-          child: Text('Being a self-starter'),
-        ),
-        const PopupMenuItem<WhyFarther>(
-          value: WhyFarther.tradingCharter,
-          child: Text('Placed'),
-        ),
-      ],
-    );
-  }
+      );
 }
-
-enum WhyFarther { harder, smarter, selfStarter, tradingCharter }

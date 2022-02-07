@@ -31,7 +31,10 @@ class _HomePageState extends State<HomePage> {
             physics: const NeverScrollableScrollPhysics(),
             controller: pageController,
             children: [
-              DashBoard(manager: manager),
+              DashBoard(
+                manager: manager,
+                pageController: pageController,
+              ),
               StoragePage(manager: manager),
             ],
           ),

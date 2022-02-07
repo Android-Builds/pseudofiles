@@ -39,6 +39,14 @@ class _NavBarBottomState extends State<NavBarBottom> {
   void initState() {
     addListerner(FileManager.getDashBoardScrollController());
     addListerner(FileManager.getStoragePageScrollController());
+    widget.pageController.addListener(() {
+      if (widget.pageController.page!.toInt() != selectedIndex) {
+        if (!mounted) {
+          return;
+        }
+        setState(() => selectedIndex = widget.pageController.page!.toInt());
+      }
+    });
     super.initState();
   }
 
@@ -87,10 +95,7 @@ class _NavBarBottomState extends State<NavBarBottom> {
         ),
         child: IconButton(
           onPressed: () {
-            setState(() {
-              selectedIndex = index;
-            });
-            goToPage(selectedIndex);
+            goToPage(index);
           },
           icon: Icon(
             icon,

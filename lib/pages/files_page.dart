@@ -57,7 +57,7 @@ class _FilesPageState extends State<FilesPage> {
       await Future.delayed(const Duration(milliseconds: 1000));
       isFirst = false;
     }
-    return widget.manager.getDirectories(sortTypes.name);
+    return widget.manager.getDirectories();
   }
 
   @override

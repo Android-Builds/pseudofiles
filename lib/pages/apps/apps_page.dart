@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
-import 'package:pseudofiles/widgets/apks_list.dart';
+import 'package:pseudofiles/pages/apps/apks_list.dart';
 import 'package:pseudofiles/widgets/app_bar.dart';
-import 'package:pseudofiles/widgets/installed_apps.dart';
+import 'package:pseudofiles/pages/apps/installed_apps.dart';
 
 final List<String> _tabs = ['Installed', 'APKs'];
 

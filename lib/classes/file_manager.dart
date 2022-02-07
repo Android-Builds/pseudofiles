@@ -16,6 +16,8 @@ enum sortTypes { name, date, size, type }
 
 class FileManager {
   static bool _showHidden = false;
+  static bool _descending = false;
+  static sortTypes _sortType = sortTypes.name;
   static final ValueNotifier<String> _currentPath = ValueNotifier<String>('');
   static final ValueNotifier<String> _speed = ValueNotifier<String>('0 Mb/s');
   static final ValueNotifier<String> _taskFile = ValueNotifier<String>('none');
@@ -28,9 +30,14 @@ class FileManager {
   static ScrollController _dashBoardScrollController = ScrollController();
   static ScrollController _storagePageScrollController = ScrollController();
 
-  bool get showHidden => _showHidden;
+  sortTypes get sortType => _sortType;
+  set sortType(sortTypes type) => _sortType = type;
 
+  bool get showHidden => _showHidden;
   set showHidden(bool value) => _showHidden = value;
+
+  bool get descending => _descending;
+  set descending(bool value) => _descending = value;
 
   ValueNotifier<String> get currentPath => _currentPath;
   ValueNotifier<String> get taskFile => _taskFile;
@@ -280,6 +287,10 @@ class FileManager {
     _currentPath.value = path;
   }
 
+  String joinPaths(String basePath, String entityPath) {
+    return path.join(basePath, entityPath);
+  }
+
   //Methods for fetching FileSystemEntity list
 
   static int getComparisionByCase(sortTypes type, FileSystemEntity entity1,
@@ -309,8 +320,8 @@ class FileManager {
 
   static List<FileSystemEntity> getSortedList(List<FileSystemEntity> files,
       List<FileSystemEntity> folders, sortTypes type) {
-    files.sort((a, b) => getComparisionByCase(type, a, b, false));
-    folders.sort((a, b) => getComparisionByCase(type, a, b, false));
+    files.sort((a, b) => getComparisionByCase(type, a, b, _descending));
+    folders.sort((a, b) => getComparisionByCase(type, a, b, _descending));
     return [...folders, ...files];
   }
 
@@ -404,9 +415,9 @@ class FileManager {
     return '${filesAndDirs[0].length} folders, ${filesAndDirs[1].length} files';
   }
 
-  Future<List<FileSystemEntity>> getDirectories(sortTypes type) async {
+  Future<List<FileSystemEntity>> getDirectories() async {
     List<List<FileSystemEntity>> filesAndDirs = await getEntities();
-    return getSortedList(filesAndDirs[1], filesAndDirs[0], type);
+    return getSortedList(filesAndDirs[1], filesAndDirs[0], _sortType);
   }
 
   List<FileSystemEntity> getAllFiles(String path) {

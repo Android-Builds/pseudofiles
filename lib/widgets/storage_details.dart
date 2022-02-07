@@ -15,14 +15,19 @@ class _StorageDetailsState extends State<StorageDetails>
     with TickerProviderStateMixin {
   late TabController tabController;
   int index = 0;
-  @override
-  void initState() {
-    super.initState();
+
+  initTabController() async {
     tabController = TabController(
       initialIndex: 0,
-      length: 2,
+      length: (await widget.manager.getRootDirectories()).length,
       vsync: this,
     );
+  }
+
+  @override
+  void initState() {
+    initTabController();
+    super.initState();
   }
 
   @override

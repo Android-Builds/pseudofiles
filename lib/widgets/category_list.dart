@@ -14,8 +14,13 @@ import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
 
 class CategoryList extends StatelessWidget {
-  CategoryList({Key? key, required this.manager}) : super(key: key);
+  CategoryList({
+    Key? key,
+    required this.manager,
+    required this.pageController,
+  }) : super(key: key);
   final FileManager manager;
+  final PageController pageController;
 
   final List<Category> categories = [];
 
@@ -99,13 +104,24 @@ class CategoryList extends StatelessWidget {
         ),
         width: size.width * 0.3,
         child: InkWell(
-          onTap: () {
+          onTap: () async {
             //manager.getInstalledAppSizes();
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => categories[index].page,
-                ));
+            if (index == 0 || index == 1) {
+              manager.changeDirectory(manager.joinPaths(
+                  (await manager.getRootDirectories())[0].path,
+                  categories[index].name));
+              pageController.animateToPage(
+                1,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.bounceInOut,
+              );
+            } else {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => categories[index].page,
+                  ));
+            }
           },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

@@ -15,7 +15,7 @@ class _FloatingButtonMenuState extends State<FloatingButtonMenu>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
   late Animation<Offset> offset;
-  static bool hidden = true;
+  bool hidden = true;
 
   @override
   void initState() {

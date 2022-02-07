@@ -9,9 +9,14 @@ import '../../widgets/category_list.dart';
 import '../../widgets/recent_files.dart';
 
 class DashBoard extends StatelessWidget {
-  const DashBoard({Key? key, required this.manager}) : super(key: key);
+  const DashBoard({
+    Key? key,
+    required this.manager,
+    required this.pageController,
+  }) : super(key: key);
 
   final FileManager manager;
+  final PageController pageController;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +44,10 @@ class DashBoard extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          CategoryList(manager: manager),
+          CategoryList(
+            manager: manager,
+            pageController: pageController,
+          ),
           ListTile(
             dense: true,
             title: const Text(

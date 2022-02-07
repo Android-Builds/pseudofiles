@@ -24,6 +24,7 @@ final darkThemeExp = ThemeData(
 );
 
 ThemeData lightTheme = ThemeData.light().copyWith(
+  androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
   textTheme: GoogleFonts.montserratTextTheme(
     ThemeData.light().textTheme,
   ),
@@ -52,6 +53,7 @@ ThemeData lightTheme = ThemeData.light().copyWith(
 );
 
 ThemeData darkTheme = ThemeData.dark().copyWith(
+  androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
   backgroundColor: Colors.grey.shade900,
   applyElevationOverlayColor: true,
   cardColor: Colors.grey[900],
@@ -60,6 +62,14 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
   textTheme: GoogleFonts.montserratTextTheme(
     ThemeData.dark().textTheme,
   ),
+  listTileTheme: const ListTileThemeData(iconColor: Colors.white),
+  checkboxTheme: CheckboxThemeData(
+    fillColor: MaterialStateProperty.resolveWith((states) => accentColor),
+    checkColor: MaterialStateProperty.resolveWith((states) => Colors.black),
+  ),
+  radioTheme: RadioThemeData(
+      fillColor: MaterialStateProperty.resolveWith((states) => accentColor)),
+  iconTheme: const IconThemeData(color: Colors.white),
   textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
     foregroundColor: MaterialStateProperty.resolveWith((states) => accentColor),

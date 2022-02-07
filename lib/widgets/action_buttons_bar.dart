@@ -123,8 +123,8 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
                             : const SizedBox.shrink(),
                         navBarIcon(Icons.share, () {}),
                         navBarIcon(Icons.select_all, () async {
-                          List<FileSystemEntity> list = await widget.manager
-                              .getDirectories(sortTypes.name);
+                          List<FileSystemEntity> list =
+                              await widget.manager.getDirectories();
                           if (widget.manager.selectedFiles.value.length ==
                               list.length) {
                             widget.manager.selectedFiles.value =
