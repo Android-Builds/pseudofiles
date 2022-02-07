@@ -15,15 +15,15 @@ Some portion of the code for this project was inspired from [file_manager](https
 - [x] Pictures
 - [ ] Search.
 - [ ] Sort Files [While this works, the option to choose betwee sort types is yet to be added].
-- [ ] Show/Hide Hidden files [Same as Sort Files, hidden files are not shown by default].
+- [x] Show/Hide Hidden files.
 - [x] Copy/Move/Paste Files [Still wip as it occupies the UI, need to provide background support].
 - [x] Delete Files/Folders.
 - [x] Rename Files/Folders.
 - [x] Dark/White Mode.
 - [ ] Material 3 Support
 
-## 📸 ScreenShots
+## ScreenShots
 
 
-## 🔖 LICENCE
+## LICENCE
 [GPLv3](https://github.com/Android-Builds/pseudofiles/blob/main/LICENSE)
