@@ -26,23 +26,37 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
   //List<FileSystemEntity> widget.manager.selectedFiles = [];
   late ScrollController scrollController;
 
-  void listener() {
+  void selectedFilesListener() {
     if (widget.manager.selectedFiles.value.isEmpty ||
         widget.manager.selectedFiles.value.isNotEmpty) {
       setState(() {});
     }
   }
 
+  void currentPathListener() {
+    ScrollController controller = FileManager.getStoragePageScrollController();
+    if (FileManager.getStoragePageScrollController().offset !=
+        controller.initialScrollOffset) {
+      FileManager.getStoragePageScrollController().animateTo(
+        controller.initialScrollOffset,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.bounceInOut,
+      );
+    }
+  }
+
   @override
   void initState() {
-    widget.manager.selectedFiles.addListener(listener);
+    widget.manager.selectedFiles.addListener(selectedFilesListener);
     scrollController = ScrollController();
+    widget.manager.currentPath.addListener(currentPathListener);
     super.initState();
   }
 
   @override
   void dispose() {
-    widget.manager.selectedFiles.removeListener(listener);
+    widget.manager.selectedFiles.removeListener(selectedFilesListener);
+    widget.manager.currentPath.removeListener(currentPathListener);
     super.dispose();
   }
 

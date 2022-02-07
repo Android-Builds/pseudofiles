@@ -34,47 +34,51 @@ class _FloatingButtonMenuState extends State<FloatingButtonMenu>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        SlideTransition(
-          position: offset,
-          child: AnimatedOpacity(
-              opacity: hidden ? 0.0 : 1.0,
-              duration: const Duration(milliseconds: 200),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: widget.items.length,
-                itemBuilder: (context, index) => miniButton(
-                  widget.items[index].label,
-                  widget.items[index].icon,
-                  widget.items[index].onTap,
-                ),
-              )),
-        ),
-        FloatingActionButton(
-          child: CustomAnimatedIcon(
-            isOpen: hidden,
-            icon1: Icons.add,
-            icon2: Icons.close,
+    return SizedBox(
+      width: size.width * 0.31,
+      height: size.height * 0.25,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          SlideTransition(
+            position: offset,
+            child: AnimatedOpacity(
+                opacity: hidden ? 0.0 : 1.0,
+                duration: const Duration(milliseconds: 200),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: widget.items.length,
+                  itemBuilder: (context, index) => miniButton(
+                    widget.items[index].label,
+                    widget.items[index].icon,
+                    widget.items[index].onTap,
+                  ),
+                )),
           ),
-          onPressed: () {
-            switch (controller.status) {
-              case AnimationStatus.completed:
-                controller.reverse();
-                break;
-              case AnimationStatus.dismissed:
-                controller.forward();
-                break;
-              default:
-            }
-            setState(() => hidden = !hidden);
-          },
-          heroTag: 'Floating Menu',
-        ),
-        const SizedBox(height: 10.0),
-      ],
+          FloatingActionButton(
+            child: CustomAnimatedIcon(
+              isOpen: hidden,
+              icon1: Icons.add,
+              icon2: Icons.close,
+            ),
+            onPressed: () {
+              switch (controller.status) {
+                case AnimationStatus.completed:
+                  controller.reverse();
+                  break;
+                case AnimationStatus.dismissed:
+                  controller.forward();
+                  break;
+                default:
+              }
+              setState(() => hidden = !hidden);
+            },
+            heroTag: 'Floating Menu',
+          ),
+          const SizedBox(height: 10.0),
+        ],
+      ),
     );
   }
 
