@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_icons_null_safety/flutter_icons_null_safety.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pseudofiles/classes/apk.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
@@ -77,8 +78,16 @@ class FileListTile extends StatelessWidget {
         );
       case 'image':
         return getImage(context);
+      case 'vnd.openxmlformats-officedocument.wordprocessingml.document':
+        return getIconWidget(context, FontAwesomeIcons.solidFileWord);
+      case 'vnd.openxmlformats-officedocument.presentationml.presentation':
+        return getIconWidget(context, FontAwesomeIcons.solidFilePowerpoint);
       case 'pdf':
         return getIconWidget(context, FontAwesomeIcons.solidFilePdf);
+      case 'text':
+        return getIconWidget(context, FontAwesomeIcons.solidFileAlt);
+      case 'xml':
+        return getIconWidget(context, FontAwesomeIcons.solidFileCode);
       case 'json':
         return getIconWidget(context, FontAwesomeIcons.solidFileCode);
       case 'zip':

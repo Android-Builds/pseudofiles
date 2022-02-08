@@ -439,7 +439,7 @@ class FileManager {
   static Future<dynamic> getAllMedias(MediaType type) async {
     try {
       final List result = await platform
-          .invokeListMethod('getAllImages', {'mediaType': type.name}) as List;
+          .invokeListMethod('getAllMedias', {'mediaType': type.name}) as List;
       return result;
     } on PlatformException catch (e) {
       debugPrint(e.toString());
@@ -511,5 +511,26 @@ class FileManager {
       debugPrint(e.toString());
     }
     return '';
+  }
+
+  static Future<dynamic> getDocumentsSize() async {
+    try {
+      final dynamic result = await platform.invokeMethod('getDocumentsSize');
+      return result;
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
+    return '';
+  }
+
+  static Future<List<String>> getAllDocuments() async {
+    try {
+      final List<Object?> result =
+          await platform.invokeMethod('getAllDocuments');
+      return result.map((e) => e.toString()).toList();
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
+    return [];
   }
 }

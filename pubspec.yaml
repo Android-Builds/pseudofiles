@@ -42,6 +42,9 @@ dependencies:
   google_fonts:
   hawk_fab_menu: ^1.1.1
   font_awesome_flutter: ^9.2.0
+  flutter_icons_null_safety:
+    git:
+      url: https://github.com/zyzdev/flutter_icons_null_safety
   percent_indicator: ^3.4.0
 
   #date

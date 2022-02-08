@@ -14,10 +14,9 @@ class PicturesPage extends StatefulWidget {
 }
 
 class _PicturesPageState extends State<PicturesPage> {
-  List<dynamic> allImages = [];
+  static List<dynamic> allImages = [];
 
   Future<dynamic> getImages() async {
-    await Future.delayed(const Duration(seconds: 2), () async {});
     if (allImages.isEmpty) {
       allImages = await FileManager.getAllMedias(MediaType.image);
     }

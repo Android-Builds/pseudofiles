@@ -24,29 +24,23 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Stack(
+      extendBody: true,
+      body: PageView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: pageController,
         children: [
-          PageView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: pageController,
-            children: [
-              DashBoard(pageController: pageController),
-              const StoragePage(),
-            ],
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: ValueListenableBuilder(
-              valueListenable: FileManager.selectedFiles,
-              builder: (context, value, child) {
-                List<FileSystemEntity> list = value as List<FileSystemEntity>;
-                return list.isEmpty
-                    ? NavBarBottom(pageController: pageController)
-                    : const ActionButtonsBar();
-              },
-            ),
-          )
+          DashBoard(pageController: pageController),
+          const StoragePage(),
         ],
+      ),
+      bottomNavigationBar: ValueListenableBuilder(
+        valueListenable: FileManager.selectedFiles,
+        builder: (context, value, child) {
+          List<FileSystemEntity> list = value as List<FileSystemEntity>;
+          return list.isEmpty
+              ? NavBarBottom(pageController: pageController)
+              : const ActionButtonsBar();
+        },
       ),
     );
   }

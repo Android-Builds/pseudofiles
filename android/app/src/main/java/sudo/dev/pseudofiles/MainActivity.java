@@ -9,6 +9,7 @@ import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
 import sudo.dev.pseudofiles.classes.ApplicationHelper;
+import sudo.dev.pseudofiles.classes.DocumentHelper;
 import sudo.dev.pseudofiles.classes.MediaHelper;
 import sudo.dev.pseudofiles.classes.StorageHelper;
 
@@ -34,9 +35,13 @@ public class MainActivity extends FlutterActivity {
                                         result.success(storageHelper.getStorageDetails(getApplicationContext()));
                                         break;
                                     }
-                                    case "getAllImages": {
+                                    case "getAllMedias": {
                                         MediaHelper mediaHelper = new MediaHelper(getApplicationContext(), call.argument("mediaType"));
                                         result.success(mediaHelper.getMediaPaths());
+                                        break;
+                                    }
+                                    case "getAllDocuments": {
+                                        result.success(DocumentHelper.getAllDocuments(getApplicationContext()));
                                         break;
                                     }
                                     case "getInstalledApps": {
@@ -62,6 +67,10 @@ public class MainActivity extends FlutterActivity {
                                     case "getMediaSize": {
                                         MediaHelper mediaHelper = new MediaHelper(getApplicationContext(), call.argument("mediaType"));
                                         result.success(mediaHelper.getMediaSize());
+                                        break;
+                                    }
+                                    case "getDocumentsSize": {
+                                        result.success(DocumentHelper.getDocumentsSize(getApplicationContext()));
                                         break;
                                     }
                                     case "getRecentFiles": {

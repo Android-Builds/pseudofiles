@@ -16,11 +16,10 @@ class ApksList extends StatefulWidget {
 }
 
 class _ApksListState extends State<ApksList> {
-  List<dynamic> allApps = [];
-  List<APK> allAPKs = [];
+  static List<dynamic> allApps = [];
+  static List<APK> allAPKs = [];
 
   Future<dynamic> getApps() async {
-    await Future.delayed(const Duration(seconds: 2), () async {});
     if (allApps.isEmpty) {
       allApps = await FileManager.getApkFromStorage();
       for (var element in allApps) {

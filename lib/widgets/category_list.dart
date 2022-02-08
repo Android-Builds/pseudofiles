@@ -5,6 +5,7 @@ import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/classes/enums/media_enum.dart';
 import 'package:pseudofiles/pages/apps/apps_page.dart';
 import 'package:pseudofiles/pages/audio_page.dart';
+import 'package:pseudofiles/pages/documents_page.dart';
 import 'package:pseudofiles/pages/pictures/picture_page.dart';
 import 'package:pseudofiles/pages/storage_page/storage_page.dart';
 import 'package:pseudofiles/pages/videos/videos_page.dart';
@@ -17,50 +18,52 @@ class CategoryList extends StatelessWidget {
   final PageController pageController;
 
   void setCategories() {
-    categories.addAll([
-      Category(
-        'Download',
-        FontAwesomeIcons.fileDownload,
-        const StoragePage(),
-        FileManager.getDirectorySize,
-        'storage/emulated/0/Download',
-      ),
-      Category(
-        'Documents',
-        FontAwesomeIcons.folderPlus,
-        const StoragePage(),
-        FileManager.getDirectorySize,
-        'storage/emulated/0/Documents',
-      ),
-      Category(
-        'Apps',
-        FontAwesomeIcons.android,
-        const AppsPage(),
-        FileManager.getInstalledAppSizes,
-        '',
-      ),
-      Category(
-        'Audio',
-        Icons.photo_album,
-        const AudioPage(),
-        FileManager.getMediaSize,
-        MediaType.audio,
-      ),
-      Category(
-        'Pictures',
-        Icons.photo_album,
-        const PicturesPage(),
-        FileManager.getMediaSize,
-        MediaType.image,
-      ),
-      Category(
-        'Video',
-        FontAwesomeIcons.video,
-        const VideosPage(),
-        FileManager.getMediaSize,
-        MediaType.video,
-      ),
-    ]);
+    if (categories.isEmpty) {
+      categories.addAll([
+        Category(
+          'Download',
+          FontAwesomeIcons.fileDownload,
+          const StoragePage(),
+          FileManager.getDirectorySize,
+          'storage/emulated/0/Download',
+        ),
+        Category(
+          'Documents',
+          FontAwesomeIcons.folderPlus,
+          const DocumentsPage(),
+          FileManager.getDocumentsSize,
+          '',
+        ),
+        Category(
+          'Apps',
+          FontAwesomeIcons.android,
+          const AppsPage(),
+          FileManager.getInstalledAppSizes,
+          '',
+        ),
+        Category(
+          'Audio',
+          Icons.photo_album,
+          const AudioPage(),
+          FileManager.getMediaSize,
+          MediaType.audio,
+        ),
+        Category(
+          'Pictures',
+          Icons.photo_album,
+          const PicturesPage(),
+          FileManager.getMediaSize,
+          MediaType.image,
+        ),
+        Category(
+          'Video',
+          FontAwesomeIcons.video,
+          const VideosPage(),
+          FileManager.getMediaSize,
+          MediaType.video,
+        ),
+      ]);
+    }
   }
 
   Future<String> getDetails(Category category) async {
@@ -98,7 +101,7 @@ class CategoryList extends StatelessWidget {
         child: InkWell(
           onTap: () async {
             //manager.getInstalledAppSizes();
-            if (index == 0 || index == 1) {
+            if (index == 0) {
               FileManager.changeDirectory(FileManager.joinPaths(
                   (await FileManager.getRootDirectories())[0].path,
                   categories[index].name));

@@ -64,8 +64,11 @@ class _NavBarBottomState extends State<NavBarBottom> {
       duration: const Duration(milliseconds: 200),
       firstChild: Container(
         height: size.height * 0.08,
-        width: size.width * 0.3,
-        margin: const EdgeInsets.all(20.0),
+        width: size.width,
+        margin: EdgeInsets.symmetric(
+          vertical: 20.0,
+          horizontal: size.width * 0.35,
+        ),
         padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           color: Theme.of(context).backgroundColor,

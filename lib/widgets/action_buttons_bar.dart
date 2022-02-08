@@ -140,9 +140,13 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
                         navBarIcon(Icons.delete, () {
                           confirmDeleteDialog();
                         }),
-                        FileManager.selectedFiles.value.length == 1
-                            ? navBarIcon(Icons.edit, () {})
-                            : const SizedBox.shrink(),
+                        ValueListenableBuilder(
+                          valueListenable: FileManager.selectedFiles,
+                          builder: (_, value, child) =>
+                              (value as List<FileSystemEntity>).length == 1
+                                  ? navBarIcon(Icons.edit, () {})
+                                  : const SizedBox.shrink(),
+                        ),
                         navBarIcon(Icons.share, () {}),
                         navBarIcon(Icons.select_all, () async {
                           List<FileSystemEntity> list =

@@ -10,10 +10,9 @@ class InstalledApps extends StatefulWidget {
 }
 
 class _InstalledAppsState extends State<InstalledApps> {
-  List<dynamic> allApps = [];
+  static List<dynamic> allApps = [];
 
   Future<dynamic> getApps() async {
-    await Future.delayed(const Duration(seconds: 2), () async {});
     if (allApps.isEmpty) {
       allApps = await FileManager.getInstalledApps();
     }
