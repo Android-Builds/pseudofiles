@@ -43,14 +43,14 @@ class CategoryList extends StatelessWidget {
         ),
         Category(
           'Audio',
-          Icons.photo_album,
+          FontAwesomeIcons.music,
           const AudioPage(),
           FileManager.getMediaSize,
           MediaType.audio,
         ),
         Category(
           'Pictures',
-          Icons.photo_album,
+          FontAwesomeIcons.image,
           const PicturesPage(),
           FileManager.getMediaSize,
           MediaType.image,

@@ -31,13 +31,15 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
   }
 
   void currentPathListener() {
-    ScrollController controller = FileManager.getStoragePageScrollController();
-    if (FileManager.getStoragePageScrollController().offset !=
-        controller.initialScrollOffset) {
+    if (FileManager.getStoragePageScrollController()
+            .position
+            .hasContentDimensions &&
+        FileManager.getStoragePageScrollController().offset !=
+            FileManager.getStoragePageScrollController().initialScrollOffset) {
       FileManager.getStoragePageScrollController().animateTo(
-        controller.initialScrollOffset,
+        FileManager.getStoragePageScrollController().initialScrollOffset,
         duration: const Duration(milliseconds: 500),
-        curve: Curves.bounceInOut,
+        curve: Curves.linear,
       );
     }
   }

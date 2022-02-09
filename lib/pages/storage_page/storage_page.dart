@@ -104,6 +104,10 @@ class _StoragePageState extends State<StoragePage> {
     return Scaffold(
       key: FileManager.globalKey,
       drawer: const AppDrawer(),
+      onDrawerChanged: (isOpen) async {
+        Future.delayed(const Duration(milliseconds: 200));
+        FileManager.hideNavbar.value = isOpen;
+      },
       body: ValueListenableBuilder(
         valueListenable: FileManager.taskFile,
         builder: (context, value, child) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
+import 'package:pseudofiles/pages/settings/settings_home.dart';
 import 'package:pseudofiles/utils/constants.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -8,11 +9,34 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: Theme.of(context).backgroundColor,
       child: ListView(
         children: [
           Container(
+            padding: const EdgeInsets.all(10.0),
+            alignment: Alignment.bottomLeft,
             height: size.height * 0.2,
-            color: Colors.white,
+            //color: Theme.of(context).backgroundColor,
+            child: Row(
+              children: [
+                Text(
+                  'Pseudo Files',
+                  style: TextStyle(
+                    fontSize: size.width * 0.05,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                IconButton(
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsHome(),
+                      )),
+                  icon: const Icon(Icons.settings),
+                )
+              ],
+            ),
           ),
           titleListTile('Storage'),
           storageListTile(
@@ -47,7 +71,7 @@ class AppDrawer extends StatelessWidget {
               leading: Icon(categories[index].icon),
               title: Text(categories[index].name),
               onTap: () async {
-                if (index == 0 || index == 1) {
+                if (index == 0) {
                   FileManager.changeDirectory(FileManager.joinPaths(
                       (await FileManager.getRootDirectories())[0].path,
                       categories[index].name));

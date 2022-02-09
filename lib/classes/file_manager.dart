@@ -31,6 +31,9 @@ class FileManager {
   static final ScrollController _storagePageScrollController =
       ScrollController();
 
+  //Temporary as a step to hide navbar
+  static final ValueNotifier hideNavbar = ValueNotifier<bool>(false);
+
   static GlobalKey<ScaffoldState> get globalKey => _globalKey;
 
   static ValueNotifier<String> get currentPath => _currentPath;

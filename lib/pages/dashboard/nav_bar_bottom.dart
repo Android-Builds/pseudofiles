@@ -60,35 +60,42 @@ class _NavBarBottomState extends State<NavBarBottom> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedCrossFade(
-      duration: const Duration(milliseconds: 200),
-      firstChild: Container(
-        height: size.height * 0.08,
-        width: size.width,
-        margin: EdgeInsets.symmetric(
-          vertical: 20.0,
-          horizontal: size.width * 0.35,
-        ),
-        padding: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          color: Theme.of(context).backgroundColor,
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        child: FittedBox(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              navBarIcon(FontAwesomeIcons.home, 0),
-              navBarIcon(FontAwesomeIcons.list, 1),
-            ],
-          ),
-        ),
-      ),
-      secondChild: const SizedBox.shrink(),
-      crossFadeState:
-          showNavBar ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-    );
+    return ValueListenableBuilder(
+        valueListenable: FileManager.hideNavbar,
+        builder: (BuildContext context, value, Widget? child) {
+          return !(value as bool)
+              ? AnimatedCrossFade(
+                  duration: const Duration(milliseconds: 200),
+                  firstChild: Container(
+                    height: size.height * 0.08,
+                    width: size.width,
+                    margin: EdgeInsets.symmetric(
+                      vertical: 20.0,
+                      horizontal: size.width * 0.35,
+                    ),
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).backgroundColor,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: FittedBox(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          navBarIcon(FontAwesomeIcons.home, 0),
+                          navBarIcon(FontAwesomeIcons.list, 1),
+                        ],
+                      ),
+                    ),
+                  ),
+                  secondChild: const SizedBox.shrink(),
+                  crossFadeState: showNavBar
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                )
+              : const SizedBox.shrink();
+        });
   }
 
   Widget navBarIcon(IconData icon, int index) => Container(
