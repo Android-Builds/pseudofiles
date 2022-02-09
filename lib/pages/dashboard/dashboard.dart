@@ -32,6 +32,7 @@ class DashBoard extends StatelessWidget {
         controller: FileManager.getDashBoardScrollController(),
         children: [
           const StorageDetails(),
+
           const ListTile(
             dense: true,
             title: Text(

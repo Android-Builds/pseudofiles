@@ -68,14 +68,13 @@ class _NavBarBottomState extends State<NavBarBottom> {
                   duration: const Duration(milliseconds: 200),
                   firstChild: Container(
                     height: size.height * 0.08,
-                    width: size.width,
                     margin: EdgeInsets.symmetric(
                       vertical: 20.0,
-                      horizontal: size.width * 0.35,
+                      horizontal: size.width * 0.37,
                     ),
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).backgroundColor,
+                      color: Theme.of(context).colorScheme.surfaceVariant,
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                     child: FittedBox(
@@ -98,19 +97,23 @@ class _NavBarBottomState extends State<NavBarBottom> {
         });
   }
 
-  Widget navBarIcon(IconData icon, int index) => Container(
-        decoration: BoxDecoration(
-          color: index == selectedIndex ? accentColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(15.0),
+  Widget navBarIcon(IconData icon, int index) {
+    bool selected = index == selectedIndex;
+    return Container(
+      decoration: BoxDecoration(
+        color: selected ? accentColor : Colors.transparent,
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: IconButton(
+        onPressed: () {
+          goToPage(index);
+        },
+        icon: Icon(
+          icon,
+          color: !selected ? accentColor : null,
+          size: size.width * 0.045,
         ),
-        child: IconButton(
-          onPressed: () {
-            goToPage(index);
-          },
-          icon: Icon(
-            icon,
-            size: size.width * 0.05,
-          ),
-        ),
-      );
+      ),
+    );
+  }
 }

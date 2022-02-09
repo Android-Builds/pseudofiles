@@ -112,105 +112,111 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      controller: FileManager.getStoragePageScrollController(),
-      slivers: [
-        SliverPersistentHeader(
-            delegate: PersistentHeader(widget: const CustomAppBar())),
-        SliverPersistentHeader(
-          pinned: true,
-          delegate: PersistentHeader(
-            height: size.height * 0.06,
-            widget: Container(
-              width: size.width,
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: ListView.builder(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                controller: scrollController,
-                scrollDirection: Axis.horizontal,
-                itemCount: FileManager.getDirectoryNames().length,
-                itemBuilder: (context, index) {
-                  if (scrollController.positions.last.hasContentDimensions &&
-                      scrollController.offset <
-                          scrollController.position.maxScrollExtent) {
-                    scrollController.animateTo(
-                      scrollController.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.fastOutSlowIn,
-                    );
-                  }
-                  return Row(
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          if (FileManager.getDirectoryNames()[index] ==
-                                  'Internal' ||
-                              FileManager.getDirectoryNames()[index] ==
-                                  'SD Card') {
-                            FileManager.goToRootDirectory();
-                          } else {
-                            FileManager.goToParentDirectory();
-                          }
-                        },
-                        child: Text(
-                          FileManager.getDirectoryNames()[index],
-                          style: TextStyle(
-                            color: FileManager.getDirectoryNames()[index] ==
-                                    FileManager.getCurrentDir()
-                                ? accentColor
-                                : Theme.of(context).textTheme.bodyText1!.color,
-                            fontSize: size.width * 0.04,
+    return SafeArea(
+      bottom: false,
+      child: CustomScrollView(
+        controller: FileManager.getStoragePageScrollController(),
+        slivers: [
+          SliverPersistentHeader(
+              delegate: PersistentHeader(widget: const CustomAppBar())),
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: PersistentHeader(
+              height: size.height * 0.06,
+              widget: Container(
+                width: size.width,
+                color: Theme.of(context).scaffoldBackgroundColor,
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  controller: scrollController,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: FileManager.getDirectoryNames().length,
+                  itemBuilder: (context, index) {
+                    if (scrollController.positions.last.hasContentDimensions &&
+                        scrollController.offset <
+                            scrollController.position.maxScrollExtent) {
+                      scrollController.animateTo(
+                        scrollController.position.maxScrollExtent,
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.fastOutSlowIn,
+                      );
+                    }
+                    return Row(
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            if (FileManager.getDirectoryNames()[index] ==
+                                    'Internal' ||
+                                FileManager.getDirectoryNames()[index] ==
+                                    'SD Card') {
+                              FileManager.goToRootDirectory();
+                            } else {
+                              FileManager.goToParentDirectory();
+                            }
+                          },
+                          child: Text(
+                            FileManager.getDirectoryNames()[index],
+                            style: TextStyle(
+                              color: FileManager.getDirectoryNames()[index] ==
+                                      FileManager.getCurrentDir()
+                                  ? accentColor
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .color,
+                              fontSize: size.width * 0.04,
+                            ),
                           ),
                         ),
-                      ),
-                      index == FileManager.getDirectoryNames().length - 1
-                          ? const SizedBox.shrink()
-                          : const Icon(Icons.arrow_right),
-                    ],
-                  );
-                },
+                        index == FileManager.getDirectoryNames().length - 1
+                            ? const SizedBox.shrink()
+                            : const Icon(Icons.arrow_right),
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
           ),
-        ),
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              if (index == 0) {
-                return ListTile(
-                  onTap: () {
-                    FileManager.goToParentDirectory();
-                  },
-                  leading: CircleAvatar(
-                    backgroundColor: accentColor,
-                    foregroundColor:
-                        Theme.of(context).textTheme.bodyText1!.color,
-                    radius: 23.0,
-                    child: const Icon(Icons.folder),
-                  ),
-                  title: const Text('...'),
-                );
-              } else {
-                if (widget.list[index - 1] is File) {
-                  return FileListTile(
-                    entity: widget.list[index - 1],
-                    oneTapAction: oneTapAction,
-                    longPressAction: longPressAction,
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                if (index == 0) {
+                  return ListTile(
+                    onTap: () {
+                      FileManager.goToParentDirectory();
+                    },
+                    leading: CircleAvatar(
+                      backgroundColor: accentColor,
+                      foregroundColor:
+                          Theme.of(context).textTheme.bodyText1!.color,
+                      radius: 23.0,
+                      child: const Icon(Icons.folder),
+                    ),
+                    title: const Text('...'),
                   );
                 } else {
-                  return DirectoryListTile(
-                    entity: widget.list[index - 1],
-                    oneTapAction: oneTapAction,
-                    longPressAction: longPressAction,
-                  );
+                  if (widget.list[index - 1] is File) {
+                    return FileListTile(
+                      entity: widget.list[index - 1],
+                      oneTapAction: oneTapAction,
+                      longPressAction: longPressAction,
+                    );
+                  } else {
+                    return DirectoryListTile(
+                      entity: widget.list[index - 1],
+                      oneTapAction: oneTapAction,
+                      longPressAction: longPressAction,
+                    );
+                  }
                 }
-              }
-            },
-            childCount: widget.list.length + 1,
-          ),
-        )
-      ],
+              },
+              childCount: widget.list.length + 1,
+            ),
+          )
+        ],
+      ),
     );
   }
 }
