@@ -16,6 +16,7 @@ import 'enums/sort_types.dart';
 class FileManager {
   static bool showHidden = false;
   static bool descending = false;
+  static bool useMaterial3 = false;
   static final GlobalKey<ScaffoldState> _globalKey = GlobalKey();
   static sortTypes sortType = sortTypes.name;
   static final ValueNotifier<String> _currentPath = ValueNotifier<String>('');

@@ -160,7 +160,9 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
                             style: TextStyle(
                               color: FileManager.getDirectoryNames()[index] ==
                                       FileManager.getCurrentDir()
-                                  ? accentColor
+                                  ? FileManager.useMaterial3
+                                      ? null
+                                      : accentColor
                                   : Theme.of(context)
                                       .textTheme
                                       .bodyText1!
@@ -188,9 +190,12 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
                       FileManager.goToParentDirectory();
                     },
                     leading: CircleAvatar(
-                      backgroundColor: accentColor,
-                      foregroundColor:
-                          Theme.of(context).textTheme.bodyText1!.color,
+                      backgroundColor: FileManager.useMaterial3
+                          ? Theme.of(context).colorScheme.secondary
+                          : accentColor,
+                      foregroundColor: FileManager.useMaterial3
+                          ? Theme.of(context).colorScheme.background
+                          : Theme.of(context).textTheme.bodyText1!.color,
                       radius: 23.0,
                       child: const Icon(Icons.folder),
                     ),

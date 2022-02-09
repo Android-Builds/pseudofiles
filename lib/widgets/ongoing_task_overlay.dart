@@ -35,8 +35,13 @@ class OngoingTaskOverlay extends StatelessWidget {
               SizedBox(
                 width: size.width * 0.9,
                 child: LinearProgressIndicator(
-                  color: accentColor,
-                  backgroundColor: accentColor.withOpacity(0.4),
+                  color: FileManager.useMaterial3
+                      ? Theme.of(context).colorScheme.secondary
+                      : accentColor,
+                  backgroundColor: (FileManager.useMaterial3
+                          ? Theme.of(context).colorScheme.secondary
+                          : accentColor)
+                      .withOpacity(0.4),
                 ),
               ),
               const SizedBox(height: 20),

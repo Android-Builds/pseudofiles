@@ -55,29 +55,31 @@ class _PicturesPageState extends State<PicturesPage> {
                       )),
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10.0),
-                          child: Image.file(
-                            File(val[0]),
-                            height: size.height * 0.25,
-                            width: size.width * 0.5,
-                            fit: BoxFit.cover,
+                    child: FittedBox(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: Image.file(
+                              File(val[0]),
+                              height: size.height * 0.25,
+                              width: size.width * 0.5,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 10.0),
-                        Text(map.keys.first, maxLines: 1),
-                        const SizedBox(height: 5.0),
-                        Text(
-                          getText(map.values.elementAt(0).length),
-                          style: TextStyle(
-                            fontSize: size.width * 0.03,
-                            color: Colors.grey,
-                          ),
-                        )
-                      ],
+                          const SizedBox(height: 10.0),
+                          Text(map.keys.first, maxLines: 1),
+                          const SizedBox(height: 5.0),
+                          Text(
+                            getText(map.values.elementAt(0).length),
+                            style: TextStyle(
+                              fontSize: size.width * 0.03,
+                              color: Colors.grey,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 );

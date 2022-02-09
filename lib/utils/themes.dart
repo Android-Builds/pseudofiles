@@ -6,8 +6,8 @@ final ColorScheme lightScheme = ColorScheme.fromSeed(seedColor: Colors.green);
 final ColorScheme darkScheme =
     ColorScheme.fromSeed(seedColor: Colors.green, brightness: Brightness.dark);
 
-// final Color accentColor = Colors.blue.shade200;
-Color accentColor = lightScheme.secondary;
+final Color accentColor = Colors.blue.shade200;
+// Color accentColor = lightScheme.secondary;
 
 final lightThemeExp = ThemeData(
   //colorScheme: lightScheme,
@@ -24,7 +24,7 @@ final lightThemeExp = ThemeData(
     ),
     backgroundColor: lightScheme.background,
     elevation: 0.0,
-    iconTheme: iconTheme,
+    //iconTheme: iconTheme,
     foregroundColor: Colors.black,
   ),
   iconTheme: const IconThemeData(color: Colors.white),

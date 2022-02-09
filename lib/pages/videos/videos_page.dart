@@ -63,29 +63,31 @@ class _VideosPageState extends State<VideosPage> {
                       if (snapshot.hasData) {
                         return Padding(
                           padding: const EdgeInsets.all(5.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10.0),
-                                child: Image.memory(
-                                  snapshot.data,
-                                  height: size.height * 0.25,
-                                  width: size.width * 0.5,
-                                  fit: BoxFit.cover,
+                          child: FittedBox(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: Image.memory(
+                                    snapshot.data,
+                                    height: size.height * 0.25,
+                                    width: size.width * 0.5,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Text(map.keys.first, maxLines: 1),
-                              const SizedBox(height: 5.0),
-                              Text(
-                                getText(val.length),
-                                style: TextStyle(
-                                  fontSize: size.width * 0.03,
-                                  color: Colors.grey,
-                                ),
-                              )
-                            ],
+                                const SizedBox(height: 10.0),
+                                Text(map.keys.first, maxLines: 1),
+                                const SizedBox(height: 5.0),
+                                Text(
+                                  getText(val.length),
+                                  style: TextStyle(
+                                    fontSize: size.width * 0.03,
+                                    color: Colors.grey,
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         );
                       } else {

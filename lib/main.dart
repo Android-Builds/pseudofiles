@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pseudofiles/bloc/theme_bloc/theme_bloc.dart';
+import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/pages/home_page.dart';
 import 'package:pseudofiles/utils/themes.dart';
 
@@ -14,21 +14,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool darkMode =
-        SchedulerBinding.instance!.window.platformBrightness == Brightness.dark;
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      systemNavigationBarColor:
-          darkMode ? darkScheme.background : lightScheme.background,
-      systemNavigationBarIconBrightness:
-          darkMode ? Brightness.light : Brightness.dark,
-    ));
-    //accentColor = darkMode ? darkScheme.secondary : lightScheme.secondary;
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: lightThemeExp,
-      darkTheme: darkThemeExp,
-      home: const HomePage(),
+    return BlocProvider<ThemeBloc>(
+      create: (context) => ThemeBloc(),
+      child: BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, state) {
+          return app();
+        },
+      ),
     );
   }
+
+  Widget app() => MaterialApp(
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        theme: FileManager.useMaterial3 ? lightThemeExp : lightTheme,
+        darkTheme: FileManager.useMaterial3 ? darkThemeExp : darkTheme,
+        home: const HomePage(),
+      );
 }

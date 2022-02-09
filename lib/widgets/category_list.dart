@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pseudofiles/classes/categories.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
@@ -11,6 +12,8 @@ import 'package:pseudofiles/pages/storage_page/storage_page.dart';
 import 'package:pseudofiles/pages/videos/videos_page.dart';
 import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
+
+import '../bloc/theme_bloc/theme_bloc.dart';
 
 class CategoryList extends StatelessWidget {
   const CategoryList({Key? key, required this.pageController})
@@ -78,17 +81,21 @@ class CategoryList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     setCategories();
-    return SizedBox(
-      height: size.height * 0.23,
-      child: ListView.builder(
-        shrinkWrap: true,
-        padding: const EdgeInsets.all(20.0),
-        scrollDirection: Axis.horizontal,
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          return categoryTile(index, context);
-        },
-      ),
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, state) {
+        return SizedBox(
+          height: size.height * 0.23,
+          child: ListView.builder(
+            shrinkWrap: true,
+            padding: const EdgeInsets.all(20.0),
+            scrollDirection: Axis.horizontal,
+            itemCount: categories.length,
+            itemBuilder: (context, index) {
+              return categoryTile(index, context);
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -124,11 +131,16 @@ class CategoryList extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: size.width * 0.06,
-                backgroundColor: accentColor.withOpacity(0.4),
+                backgroundColor: (FileManager.useMaterial3
+                        ? Theme.of(context).colorScheme.secondary
+                        : accentColor)
+                    .withOpacity(0.4),
                 child: Icon(
                   categories[index].icon,
-                  size: size.width * 0.06,
-                  color: accentColor,
+                  size: size.width * 0.05,
+                  color: FileManager.useMaterial3
+                      ? Theme.of(context).colorScheme.secondary
+                      : accentColor,
                 ),
               ),
               const SizedBox(height: 20.0),

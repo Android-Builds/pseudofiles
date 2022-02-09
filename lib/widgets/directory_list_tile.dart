@@ -26,14 +26,21 @@ class DirectoryListTile extends StatelessWidget {
       tileColor: showColor &&
               FileManager.selectedFiles.value
                   .any((element) => element.path == entity.path)
-          ? accentColor.withOpacity(0.2)
+          ? (FileManager.useMaterial3
+                  ? Theme.of(context).colorScheme.secondary
+                  : accentColor)
+              .withOpacity(0.2)
           : null,
       onLongPress: () => longPressAction(entity),
       onTap: () => oneTapAction(entity),
       leading: CircleAvatar(
         radius: 23.0,
-        backgroundColor: accentColor,
-        foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
+        backgroundColor: FileManager.useMaterial3
+            ? Theme.of(context).colorScheme.secondary
+            : accentColor,
+        foregroundColor: FileManager.useMaterial3
+            ? Theme.of(context).colorScheme.background
+            : Theme.of(context).textTheme.bodyText1!.color,
         child: const Icon(Icons.folder),
       ),
       title: Text(FileManager.getFileName(entity)),

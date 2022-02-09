@@ -67,7 +67,9 @@ class _AudioPageState extends State<AudioPage> {
                         leading: CircleAvatar(
                           radius: size.width * 0.06,
                           child: const Icon(Icons.music_note),
-                          backgroundColor: accentColor,
+                          backgroundColor: FileManager.useMaterial3
+                              ? Theme.of(context).colorScheme.secondary
+                              : accentColor,
                           foregroundColor:
                               Theme.of(context).textTheme.bodyText1!.color,
                         ),

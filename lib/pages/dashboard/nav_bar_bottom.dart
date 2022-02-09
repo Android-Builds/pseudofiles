@@ -74,7 +74,9 @@ class _NavBarBottomState extends State<NavBarBottom> {
                     ),
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceVariant,
+                      color: FileManager.useMaterial3
+                          ? Theme.of(context).colorScheme.surfaceVariant
+                          : Theme.of(context).backgroundColor,
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                     child: FittedBox(
@@ -101,7 +103,11 @@ class _NavBarBottomState extends State<NavBarBottom> {
     bool selected = index == selectedIndex;
     return Container(
       decoration: BoxDecoration(
-        color: selected ? accentColor : Colors.transparent,
+        color: selected
+            ? (FileManager.useMaterial3
+                ? Theme.of(context).colorScheme.secondary
+                : accentColor)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(15.0),
       ),
       child: IconButton(
@@ -110,7 +116,13 @@ class _NavBarBottomState extends State<NavBarBottom> {
         },
         icon: Icon(
           icon,
-          color: !selected ? accentColor : null,
+          color: !selected
+              ? FileManager.useMaterial3
+                  ? Theme.of(context).colorScheme.secondary
+                  : accentColor
+              : FileManager.useMaterial3
+                  ? Theme.of(context).colorScheme.background
+                  : null,
           size: size.width * 0.045,
         ),
       ),

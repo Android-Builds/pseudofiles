@@ -50,7 +50,9 @@ class FileListTile extends StatelessWidget {
   getImage(BuildContext context) {
     return CircleAvatar(
       radius: size.width * 0.06,
-      backgroundColor: accentColor,
+      backgroundColor: FileManager.useMaterial3
+          ? Theme.of(context).colorScheme.secondary
+          : accentColor,
       foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
       backgroundImage: FileImage(
         File(entity.path),
@@ -61,8 +63,12 @@ class FileListTile extends StatelessWidget {
   getIconWidget(BuildContext context, IconData iconData) {
     return CircleAvatar(
       radius: size.width * 0.06,
-      backgroundColor: accentColor,
-      foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
+      backgroundColor: FileManager.useMaterial3
+          ? Theme.of(context).colorScheme.secondary
+          : accentColor,
+      foregroundColor: FileManager.useMaterial3
+          ? Theme.of(context).colorScheme.background
+          : Theme.of(context).textTheme.bodyText1!.color,
       child: Icon(iconData),
     );
   }
@@ -81,6 +87,8 @@ class FileListTile extends StatelessWidget {
         return getIconWidget(context, FontAwesomeIcons.solidFileWord);
       case 'vnd.openxmlformats-officedocument.presentationml.presentation':
         return getIconWidget(context, FontAwesomeIcons.solidFilePowerpoint);
+      case 'x-font-ttf':
+        return getIconWidget(context, FontAwesomeIcons.font);
       case 'pdf':
         return getIconWidget(context, FontAwesomeIcons.solidFilePdf);
       case 'text':
@@ -107,7 +115,10 @@ class FileListTile extends StatelessWidget {
       tileColor: showColor &&
               FileManager.selectedFiles.value
                   .any((element) => element.path == entity.path)
-          ? accentColor.withOpacity(0.2)
+          ? (FileManager.useMaterial3
+                  ? Theme.of(context).colorScheme.secondary
+                  : accentColor)
+              .withOpacity(0.2)
           : null,
       onLongPress: () => longPressAction(entity),
       onTap: () => oneTapAction(entity),

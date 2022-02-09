@@ -50,8 +50,12 @@ class _AppIconState extends State<AppIcon> {
 
   Widget defaultIcon() => CircleAvatar(
         radius: size.width * 0.06,
-        backgroundColor: accentColor,
-        foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
+        backgroundColor: FileManager.useMaterial3
+            ? Theme.of(context).colorScheme.secondary
+            : accentColor,
+        foregroundColor: FileManager.useMaterial3
+            ? Theme.of(context).colorScheme.background
+            : Theme.of(context).textTheme.bodyText1!.color,
         child: const Icon(FontAwesomeIcons.android),
       );
 }

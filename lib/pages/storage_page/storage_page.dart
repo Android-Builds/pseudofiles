@@ -25,10 +25,14 @@ class _StoragePageState extends State<StoragePage> {
   }
 
   TextEditingController controller = TextEditingController();
-  UnderlineInputBorder borderStyle =
-      UnderlineInputBorder(borderSide: BorderSide(color: accentColor));
+  late UnderlineInputBorder borderStyle;
 
   Future<void> _createFileOrFolderDialog(String type) async {
+    borderStyle = UnderlineInputBorder(
+        borderSide: BorderSide(
+            color: FileManager.useMaterial3
+                ? Theme.of(context).colorScheme.secondary
+                : accentColor));
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
