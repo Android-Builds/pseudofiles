@@ -56,10 +56,14 @@ ThemeData lightTheme = ThemeData.light().copyWith(
   visualDensity: VisualDensity.adaptivePlatformDensity,
   scaffoldBackgroundColor: Colors.white,
   appBarTheme: AppBarTheme(
+    systemOverlayStyle: const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
     elevation: 0.0,
     color: Colors.white,
     iconTheme: iconTheme,
-    titleTextStyle: const TextStyle(color: Colors.black),
+    foregroundColor: Colors.black,
   ),
   tabBarTheme: TabBarTheme(
     unselectedLabelStyle: fontStyle,
@@ -103,6 +107,10 @@ ThemeData darkTheme = ThemeData.dark().copyWith(
     backgroundColor: Colors.grey[900],
   ),
   appBarTheme: AppBarTheme(
+    systemOverlayStyle: const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+    ),
     elevation: 0.0,
     color: Colors.black,
     iconTheme: iconTheme,

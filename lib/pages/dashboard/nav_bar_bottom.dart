@@ -66,27 +66,34 @@ class _NavBarBottomState extends State<NavBarBottom> {
           return !(value as bool)
               ? AnimatedCrossFade(
                   duration: const Duration(milliseconds: 200),
-                  firstChild: Container(
-                    height: size.height * 0.08,
-                    margin: EdgeInsets.symmetric(
+                  firstChild: Padding(
+                    padding: EdgeInsets.symmetric(
                       vertical: 20.0,
                       horizontal: size.width * 0.37,
                     ),
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: FileManager.useMaterial3
-                          ? Theme.of(context).colorScheme.surfaceVariant
-                          : Theme.of(context).backgroundColor,
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: FittedBox(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          navBarIcon(FontAwesomeIcons.home, 0),
-                          navBarIcon(FontAwesomeIcons.list, 1),
-                        ],
+                    child: SizedBox(
+                      height: size.height * 0.085,
+                      child: Card(
+                        elevation: 10.0,
+                        color: FileManager.useMaterial3
+                            ? Theme.of(context).colorScheme.surfaceVariant
+                            : Theme.of(context).backgroundColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: FittedBox(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                navBarIcon(FontAwesomeIcons.home, 0),
+                                navBarIcon(FontAwesomeIcons.list, 1),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
