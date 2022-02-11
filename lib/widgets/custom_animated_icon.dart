@@ -8,10 +8,12 @@ class CustomAnimatedIcon extends StatefulWidget {
     required this.isOpen,
     required this.icon1,
     required this.icon2,
+    this.duration = const Duration(milliseconds: 350),
   }) : super(key: key);
   final bool isOpen;
   final IconData icon1;
   final IconData icon2;
+  final Duration duration;
 
   @override
   _CustomAnimatedIconState createState() => _CustomAnimatedIconState();
@@ -21,7 +23,7 @@ class _CustomAnimatedIconState extends State<CustomAnimatedIcon> {
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 350),
+      duration: widget.duration,
       transitionBuilder: (child, anim) => RotationTransition(
         turns: child.key == const ValueKey('icon1')
             ? Tween<double>(begin: 0.75, end: 1).animate(anim)

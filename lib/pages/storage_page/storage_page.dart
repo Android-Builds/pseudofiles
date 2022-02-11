@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -8,6 +9,7 @@ import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
 import 'package:pseudofiles/widgets/app_drawer.dart';
 import 'package:pseudofiles/widgets/floating_button_menu.dart';
+import 'package:pseudofiles/widgets/floating_menu_new.dart';
 import 'package:pseudofiles/widgets/ongoing_task_overlay.dart';
 
 class StoragePage extends StatefulWidget {
@@ -26,6 +28,7 @@ class _StoragePageState extends State<StoragePage> {
 
   TextEditingController controller = TextEditingController();
   late UnderlineInputBorder borderStyle;
+  bool isOpen = false;
 
   Future<void> _createFileOrFolderDialog(String type) async {
     borderStyle = UnderlineInputBorder(
@@ -112,48 +115,82 @@ class _StoragePageState extends State<StoragePage> {
         Future.delayed(const Duration(milliseconds: 200));
         FileManager.hideNavbar.value = isOpen;
       },
-      body: ValueListenableBuilder(
-        valueListenable: FileManager.taskFile,
-        builder: (context, value, child) {
-          if (value == 'none') {
-            return Stack(
-              alignment: Alignment.center,
-              children: const [
-                FilesPage(),
-                SizedBox.shrink(),
-              ],
-            );
-          } else {
-            return Stack(
-              children: const [
-                AbsorbPointer(child: FilesPage()),
-                Align(
+      body: Stack(
+        children: [
+          ValueListenableBuilder(
+            valueListenable: FileManager.taskFile,
+            builder: (context, value, child) {
+              if (value == 'none') {
+                return Stack(
                   alignment: Alignment.center,
-                  child: OngoingTaskOverlay(),
-                ),
-              ],
-            );
-          }
-        },
+                  children: const [
+                    FilesPage(),
+                    SizedBox.shrink(),
+                  ],
+                );
+              } else {
+                return Stack(
+                  children: const [
+                    AbsorbPointer(child: FilesPage()),
+                    Align(
+                      alignment: Alignment.center,
+                      child: OngoingTaskOverlay(),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+          isOpen
+              ? BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: 5.0,
+                    sigmaY: 5.0,
+                  ),
+                  child: Container(
+                    color: Colors.black12,
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ],
       ),
       floatingActionButton: ValueListenableBuilder(
           valueListenable: FileManager.selectedFiles,
           builder: (context, value, child) {
             List<FileSystemEntity> list = value as List<FileSystemEntity>;
-            return list.isEmpty
-                ? FloatingButtonMenu(
-                    items: [
-                      FloatingButtonMenuButton('File', Icons.file_copy, () {
-                        _createFileOrFolderDialog('file');
-                        //setState(() {});
-                      }),
-                      FloatingButtonMenuButton('Folder', Icons.folder, () {
-                        _createFileOrFolderDialog('folder');
-                        //setState(() {});
-                      }),
-                    ],
-                  )
-                : const SizedBox.shrink();
+            return AnimatedCrossFade(
+              firstChild: FlaotingMenuButton(
+                items: [
+                  FloatingButtonMenuButton('File', Icons.file_copy, () {
+                    _createFileOrFolderDialog('file');
+                  }),
+                  FloatingButtonMenuButton('Folder', Icons.folder, () {
+                    _createFileOrFolderDialog('folder');
+                  }),
+                ],
+                onPressed: (value) {
+                  setState(() {
+                    isOpen = value;
+                  });
+                },
+                tooltip: 'Floating Menu',
+              ),
+              // firstChild: FloatingButtonMenu(
+              //   items: [
+              //     FloatingButtonMenuButton1('File', Icons.file_copy, () {
+              //       _createFileOrFolderDialog('file');
+              //     }),
+              //     FloatingButtonMenuButton1('Folder', Icons.folder, () {
+              //       _createFileOrFolderDialog('folder');
+              //     }),
+              //   ],
+              // ),
+              secondChild: const SizedBox.shrink(),
+              crossFadeState: list.isEmpty
+                  ? CrossFadeState.showFirst
+                  : CrossFadeState.showSecond,
+              duration: const Duration(milliseconds: 300),
+            );
           }),
     );
   }

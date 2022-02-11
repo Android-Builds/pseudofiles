@@ -5,7 +5,7 @@ import 'custom_animated_icon.dart';
 
 class FloatingButtonMenu extends StatefulWidget {
   const FloatingButtonMenu({Key? key, required this.items}) : super(key: key);
-  final List<FloatingButtonMenuButton> items;
+  final List<FloatingButtonMenuButton1> items;
 
   @override
   _FloatingButtonMenuState createState() => _FloatingButtonMenuState();
@@ -117,10 +117,10 @@ class _FloatingButtonMenuState extends State<FloatingButtonMenu>
       );
 }
 
-class FloatingButtonMenuButton {
+class FloatingButtonMenuButton1 {
   String label;
   IconData icon;
   Function onTap;
 
-  FloatingButtonMenuButton(this.label, this.icon, this.onTap);
+  FloatingButtonMenuButton1(this.label, this.icon, this.onTap);
 }

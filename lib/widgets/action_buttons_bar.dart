@@ -102,11 +102,13 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
           List<FileSystemEntity> list = value as List<FileSystemEntity>;
           return Container(
             height: size.height * 0.08,
-            width: size.width * (list.isEmpty ? 0.8 : 0.4),
+            width: size.width,
             margin: const EdgeInsets.all(20.0),
             padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
-              color: Theme.of(context).backgroundColor,
+              color: FileManager.useMaterial3
+                  ? Theme.of(context).colorScheme.surfaceVariant
+                  : Theme.of(context).backgroundColor,
               borderRadius: BorderRadius.circular(20.0),
             ),
             child: FittedBox(

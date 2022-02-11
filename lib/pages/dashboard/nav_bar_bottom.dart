@@ -69,10 +69,10 @@ class _NavBarBottomState extends State<NavBarBottom> {
                   firstChild: Padding(
                     padding: EdgeInsets.symmetric(
                       vertical: 20.0,
-                      horizontal: size.width * 0.37,
+                      horizontal: size.width * 0.36,
                     ),
                     child: SizedBox(
-                      height: size.height * 0.085,
+                      height: size.height * 0.09,
                       child: Card(
                         elevation: 10.0,
                         color: FileManager.useMaterial3
