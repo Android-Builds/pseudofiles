@@ -12,6 +12,7 @@ class RecentFilesPage extends StatelessWidget {
         title: const Text('Recent Files'),
       ),
       body: const RecentFiles(
+        isCompact: false,
         count: -1,
         scroll: true,
       ),

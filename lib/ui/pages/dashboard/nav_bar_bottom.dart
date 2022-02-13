@@ -5,11 +5,7 @@ import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
 
 class NavBarBottom extends StatefulWidget {
-  const NavBarBottom({
-    Key? key,
-    required this.pageController,
-  }) : super(key: key);
-  final PageController pageController;
+  const NavBarBottom({Key? key}) : super(key: key);
 
   @override
   _NavBarBottomState createState() => _NavBarBottomState();
@@ -39,19 +35,20 @@ class _NavBarBottomState extends State<NavBarBottom> {
   void initState() {
     addListerner(FileManager.getDashBoardScrollController());
     addListerner(FileManager.getStoragePageScrollController());
-    widget.pageController.addListener(() {
-      if (widget.pageController.page!.toInt() != selectedIndex) {
+    FileManager.pageController.addListener(() {
+      if (FileManager.pageController.page!.toInt() != selectedIndex) {
         if (!mounted) {
           return;
         }
-        setState(() => selectedIndex = widget.pageController.page!.toInt());
+        setState(
+            () => selectedIndex = FileManager.pageController.page!.toInt());
       }
     });
     super.initState();
   }
 
   void goToPage(int page) {
-    widget.pageController.animateToPage(
+    FileManager.pageController.animateToPage(
       page,
       duration: const Duration(milliseconds: 200),
       curve: Curves.bounceInOut,

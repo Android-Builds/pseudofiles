@@ -16,9 +16,15 @@ import '../pages/storage_page/storage_page.dart';
 import '../pages/videos/videos_page.dart';
 
 class CategoryList extends StatelessWidget {
-  const CategoryList({Key? key, required this.pageController})
-      : super(key: key);
+  const CategoryList({
+    Key? key,
+    required this.pageController,
+    required this.isCompact,
+    required this.tooltip,
+  }) : super(key: key);
   final PageController pageController;
+  final bool isCompact;
+  final String tooltip;
 
   void setCategories() {
     if (categories.isEmpty) {
@@ -84,114 +90,43 @@ class CategoryList extends StatelessWidget {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, state) {
         return SizedBox(
-          // height: size.height * 0.16,
-          height: size.height * 0.3,
-          child: GridView.builder(
-            itemCount: categories.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: 1.2,
-            ),
-            itemBuilder: (_, index) {
-              return SizedBox(
-                height: size.height * 0.1,
-                width: size.width * 0.1,
-                child: InkWell(
-                  onTap: () async {
-                    if (index == 0) {
-                      FileManager.changeDirectory(FileManager.joinPaths(
-                          (await FileManager.getRootDirectories())[0].path,
-                          categories[index].name));
-                      pageController.animateToPage(
-                        1,
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.bounceInOut,
-                      );
-                    } else {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => categories[index].page,
-                          ));
-                    }
-                  },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        radius: size.width * 0.055,
-                        backgroundColor: (FileManager.useMaterial3
-                                ? Theme.of(context).colorScheme.secondary
-                                : accentColor)
-                            .withOpacity(0.4),
-                        child: Icon(
-                          categories[index].icon,
-                          size: size.width * 0.05,
-                          color: FileManager.useMaterial3
-                              ? Theme.of(context).colorScheme.secondary
-                              : accentColor,
-                        ),
-                      ),
-                      const SizedBox(height: 20.0),
-                      Text(
-                        categories[index].name,
-                        style: TextStyle(
-                          fontSize: size.width * 0.03,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 5.0),
-                      FutureBuilder(
-                        future: getDetails(categories[index]),
-                        builder: (context, snapshot) => Text(
-                          categories[index].size,
-                          style: TextStyle(
-                            fontSize: size.width * 0.025,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-          // child: ListView.builder(
-          //   shrinkWrap: true,
-          //   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          //   scrollDirection: Axis.horizontal,
-          //   itemCount: categories.length,
-          //   itemBuilder: (context, index) {
-          //     return categoryTile(index, context);
-          //   },
-          // ),
+          height: isCompact ? size.height * 0.16 : size.height * 0.3,
+          child: isCompact ? compactList(context) : normalList(context),
         );
       },
     );
   }
 
-  Widget categoryTile(index, context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 2.0),
-        child: Container(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 5.0,
-          ),
-          padding: const EdgeInsets.all(10.0),
-          alignment: Alignment.centerLeft,
-          width: size.width * 0.23,
+  Widget normalList(BuildContext context) {
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: categories.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 1.2,
+      ),
+      itemBuilder: (_, index) {
+        return SizedBox(
+          height: size.height * 0.1,
+          width: size.width * 0.1,
           child: InkWell(
             onTap: () async {
-              //manager.getInstalledAppSizes();
               if (index == 0) {
                 FileManager.changeDirectory(FileManager.joinPaths(
                     (await FileManager.getRootDirectories())[0].path,
                     categories[index].name));
-                pageController.animateToPage(
-                  1,
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.bounceInOut,
-                );
+                FileManager.useCompactUi
+                    ? Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const StoragePage(),
+                        ),
+                      )
+                    : pageController.animateToPage(
+                        1,
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.bounceInOut,
+                      );
               } else {
                 Navigator.push(
                     context,
@@ -202,7 +137,7 @@ class CategoryList extends StatelessWidget {
             },
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 CircleAvatar(
                   radius: size.width * 0.055,
@@ -239,6 +174,89 @@ class CategoryList extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      );
+        );
+      },
+    );
+  }
+
+  Widget compactList(context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      scrollDirection: Axis.horizontal,
+      itemCount: categories.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2.0),
+          child: Container(
+            margin: const EdgeInsets.symmetric(
+              horizontal: 5.0,
+            ),
+            padding: const EdgeInsets.all(10.0),
+            alignment: Alignment.centerLeft,
+            width: size.width * 0.23,
+            child: InkWell(
+              onTap: () async {
+                //manager.getInstalledAppSizes();
+                if (index == 0) {
+                  FileManager.changeDirectory(FileManager.joinPaths(
+                      (await FileManager.getRootDirectories())[0].path,
+                      categories[index].name));
+                  pageController.animateToPage(
+                    1,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.bounceInOut,
+                  );
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => categories[index].page,
+                      ));
+                }
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: size.width * 0.055,
+                    backgroundColor: (FileManager.useMaterial3
+                            ? Theme.of(context).colorScheme.secondary
+                            : accentColor)
+                        .withOpacity(0.4),
+                    child: Icon(
+                      categories[index].icon,
+                      size: size.width * 0.05,
+                      color: FileManager.useMaterial3
+                          ? Theme.of(context).colorScheme.secondary
+                          : accentColor,
+                    ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  Text(
+                    categories[index].name,
+                    style: TextStyle(
+                      fontSize: size.width * 0.03,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 5.0),
+                  FutureBuilder(
+                    future: getDetails(categories[index]),
+                    builder: (context, snapshot) => Text(
+                      categories[index].size,
+                      style: TextStyle(
+                        fontSize: size.width * 0.025,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

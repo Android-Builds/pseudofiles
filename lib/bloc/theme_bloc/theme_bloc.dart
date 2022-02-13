@@ -9,6 +9,8 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     on<ThemeEvent>((event, emit) {
       if (event is ChangeTheme) {
         emit(ThemeChanged(event.useMaterial3));
+      } else if (event is ChangeCompactness) {
+        emit(CompactnessChanged(event.useCompactTheme));
       }
     });
   }

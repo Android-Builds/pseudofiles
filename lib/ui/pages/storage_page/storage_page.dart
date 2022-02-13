@@ -159,22 +159,14 @@ class _StoragePageState extends State<StoragePage> {
           builder: (context, value, child) {
             List<FileSystemEntity> list = value as List<FileSystemEntity>;
             return AnimatedCrossFade(
-              firstChild: FlaotingMenuButton(
-                items: [
-                  FloatingButtonMenuButton('File', Icons.file_copy, () {
-                    _createFileOrFolderDialog('file');
-                  }),
-                  FloatingButtonMenuButton('Folder', Icons.folder, () {
-                    _createFileOrFolderDialog('folder');
-                  }),
-                ],
-                onPressed: (value) {
-                  setState(() {
-                    isOpen = value;
-                  });
-                },
-                tooltip: 'Floating Menu',
-              ),
+              firstChild: FlaotingMenuButton(items: [
+                FloatingButtonMenuButton('File', Icons.file_copy, () {
+                  _createFileOrFolderDialog('file');
+                }),
+                FloatingButtonMenuButton('Folder', Icons.folder, () {
+                  _createFileOrFolderDialog('folder');
+                }),
+              ], onPressed: (value) => setState(() => isOpen = value)),
               // firstChild: FloatingButtonMenu(
               //   items: [
               //     FloatingButtonMenuButton1('File', Icons.file_copy, () {

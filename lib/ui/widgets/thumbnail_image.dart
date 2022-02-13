@@ -1,10 +1,18 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
+import '../../utils/constants.dart';
+
 class ThumbnailImage extends StatefulWidget {
-  const ThumbnailImage({Key? key, required this.videoPath}) : super(key: key);
+  const ThumbnailImage({
+    Key? key,
+    required this.videoPath,
+    this.forTile = false,
+  }) : super(key: key);
+  final bool forTile;
 
   final String videoPath;
 
@@ -38,12 +46,33 @@ class _ThumbnailImageState extends State<ThumbnailImage> {
       future: getThumbnail(widget.videoPath),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          return Image.memory(
-            snapshot.data,
-            fit: BoxFit.cover,
-          );
+          return !widget.forTile
+              ? Image.memory(
+                  snapshot.data,
+                  fit: BoxFit.cover,
+                )
+              : Container(
+                  height: size.height * 0.15,
+                  width: size.width * 0.3,
+                  decoration: BoxDecoration(
+                      borderRadius: FileManager.useCompactUi
+                          ? BorderRadius.circular(10.0)
+                          : null,
+                      shape: FileManager.useCompactUi
+                          ? BoxShape.rectangle
+                          : BoxShape.circle,
+                      image: DecorationImage(
+                        image: MemoryImage(snapshot.data),
+                        fit: BoxFit.cover,
+                      )),
+                );
         }
-        return const SizedBox.shrink();
+        return !FileManager.useCompactUi
+            ? const SizedBox.shrink()
+            : SizedBox(
+                height: size.height * 0.15,
+                width: size.width * 0.3,
+              );
       },
     );
   }

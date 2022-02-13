@@ -17,6 +17,8 @@ class FileManager {
   static bool showHidden = false;
   static bool descending = false;
   static bool useMaterial3 = false;
+  static bool useCompactUi = false;
+  static PageController pageController = PageController();
   static final GlobalKey<ScaffoldState> _globalKey = GlobalKey();
   static sortTypes sortType = sortTypes.name;
   static final ValueNotifier<String> _currentPath = ValueNotifier<String>('');
@@ -506,15 +508,15 @@ class FileManager {
     return '';
   }
 
-  static Future<dynamic> getRecentFiles(int limit) async {
+  static Future<List<String>> getRecentFiles(int limit) async {
     try {
-      final dynamic result =
+      final List<Object?> result =
           await platform.invokeMethod('getRecentFiles', {'limit': limit});
-      return result;
+      return result.map((e) => e.toString()).toList();
     } on PlatformException catch (e) {
       debugPrint(e.toString());
     }
-    return '';
+    return [];
   }
 
   static Future<dynamic> getDocumentsSize() async {

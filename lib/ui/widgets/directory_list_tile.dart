@@ -12,12 +12,14 @@ class DirectoryListTile extends StatelessWidget {
     required this.oneTapAction,
     required this.longPressAction,
     this.showColor = true,
+    this.dirName,
   }) : super(key: key);
 
   final FileSystemEntity entity;
   final Function oneTapAction;
   final Function longPressAction;
   final bool showColor;
+  final String? dirName;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +45,7 @@ class DirectoryListTile extends StatelessWidget {
             : Theme.of(context).textTheme.bodyText1!.color,
         child: const Icon(Icons.folder),
       ),
-      title: Text(FileManager.getFileName(entity)),
+      title: Text(dirName ?? FileManager.getFileName(entity)),
       subtitle: Row(
         children: [
           EntityCountText(directory: entity as Directory),

@@ -11,12 +11,10 @@ class FlaotingMenuButton extends StatefulWidget {
   const FlaotingMenuButton({
     Key? key,
     required this.onPressed,
-    required this.tooltip,
     required this.items,
   }) : super(key: key);
 
   final Function(bool value) onPressed;
-  final String tooltip;
   final List<FloatingButtonMenuButton> items;
 
   @override
@@ -80,11 +78,11 @@ class _FlaotingMenuButtonState extends State<FlaotingMenuButton>
           children: List.generate(widget.items.length + 1, (index) {
             if (index == widget.items.length) {
               return FloatingActionButton(
+                tooltip: FileManager.useCompactUi.toString(),
                 backgroundColor: FileManager.useMaterial3
                     ? Theme.of(context).colorScheme.secondary
                     : accentColor,
                 onPressed: animate,
-                tooltip: widget.tooltip,
                 child: CustomAnimatedIcon(
                   isOpen: isOpened,
                   icon1: Icons.close,
@@ -157,8 +155,8 @@ class MiniButtons extends StatelessWidget {
         FloatingActionButton(
           mini: true,
           onPressed: onTap,
-          tooltip: label,
           child: Icon(icon),
+          tooltip: label + FileManager.useCompactUi.toString(),
         ),
         const SizedBox(width: 5.0),
       ],

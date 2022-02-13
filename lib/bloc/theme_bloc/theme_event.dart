@@ -12,3 +12,9 @@ class ChangeTheme extends ThemeEvent {
 
   const ChangeTheme(this.useMaterial3);
 }
+
+class ChangeCompactness extends ThemeEvent {
+  final bool useCompactTheme;
+
+  const ChangeCompactness(this.useCompactTheme);
+}

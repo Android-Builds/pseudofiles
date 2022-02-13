@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:open_file/open_file.dart';
 import 'package:pseudofiles/classes/apk.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/ui/widgets/thumbnail_image.dart';
@@ -18,60 +19,80 @@ class FileListTile extends StatelessWidget {
     required this.oneTapAction,
     required this.longPressAction,
     this.showColor = true,
+    this.isCompact = false,
   }) : super(key: key);
 
   final FileSystemEntity entity;
   final Function oneTapAction;
   final Function longPressAction;
   final bool showColor;
+  final bool isCompact;
 
   Widget getIcon(IconData iconData) {
     return Icon(iconData);
   }
 
   getThumbnail() {
-    return CircleAvatar(
-      radius: size.width * 0.06,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(100.0),
-            child: ThumbnailImage(videoPath: entity.path),
-          ),
-          Icon(
-            FontAwesomeIcons.play,
-            size: size.width * 0.05,
-          )
-        ],
-      ),
+    Widget child = Stack(
+      alignment: Alignment.center,
+      children: [
+        ThumbnailImage(
+          videoPath: entity.path,
+          forTile: true,
+        ),
+        Icon(
+          FontAwesomeIcons.play,
+          size: size.width * 0.05,
+        )
+      ],
     );
+    return !isCompact
+        ? CircleAvatar(
+            radius: size.width * 0.06,
+            child: child,
+          )
+        : child;
   }
 
   getImage(BuildContext context) {
-    return CircleAvatar(
-      radius: size.width * 0.06,
-      backgroundColor: FileManager.useMaterial3
-          ? Theme.of(context).colorScheme.secondary
-          : accentColor,
-      foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
-      backgroundImage: FileImage(
-        File(entity.path),
-      ),
-    );
+    return !isCompact
+        ? CircleAvatar(
+            radius: size.width * 0.06,
+            backgroundColor: FileManager.useMaterial3
+                ? Theme.of(context).colorScheme.secondary
+                : accentColor,
+            foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
+            backgroundImage: FileImage(
+              File(entity.path),
+            ),
+          )
+        : ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: Image.file(
+              File(entity.path),
+              height: size.height * 0.15,
+              width: size.width * 0.3,
+              fit: BoxFit.cover,
+            ),
+          );
   }
 
   getIconWidget(BuildContext context, IconData iconData) {
-    return CircleAvatar(
-      radius: size.width * 0.06,
-      backgroundColor: FileManager.useMaterial3
-          ? Theme.of(context).colorScheme.secondary
-          : accentColor,
-      foregroundColor: FileManager.useMaterial3
-          ? Theme.of(context).colorScheme.background
-          : Theme.of(context).textTheme.bodyText1!.color,
-      child: Icon(iconData),
-    );
+    return !isCompact
+        ? CircleAvatar(
+            radius: size.width * 0.06,
+            backgroundColor: FileManager.useMaterial3
+                ? Theme.of(context).colorScheme.secondary
+                : accentColor,
+            foregroundColor: FileManager.useMaterial3
+                ? Theme.of(context).colorScheme.background
+                : Theme.of(context).textTheme.bodyText1!.color,
+            child: Icon(iconData),
+          )
+        : Icon(
+            iconData,
+            size: size.width * 0.27,
+          );
   }
 
   Widget getLeadingIcon(BuildContext context, String? type) {
@@ -80,6 +101,7 @@ class FileListTile extends StatelessWidget {
       case 'vnd.android.package-archive':
         return AppIcon(
           path: entity.path,
+          isCompact: isCompact,
           apk: APK(entity.path, Uint8List.fromList([])),
         );
       case 'image':
@@ -109,8 +131,7 @@ class FileListTile extends StatelessWidget {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget tileWidget(BuildContext context) {
     FileStat fileStat = entity.statSync();
     return ListTile(
       tileColor: showColor &&
@@ -138,6 +159,46 @@ class FileListTile extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+
+  Widget cardWidget(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        OpenFile.open(entity.path);
+      },
+      child: Card(
+        elevation: 4.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Column(
+            children: [
+              getLeadingIcon(context, FileManager.getMimeType(entity.path)),
+              const SizedBox(height: 10.0),
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Text(
+                  FileManager.getFileName(entity),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size.width * 0.3,
+      child: isCompact ? cardWidget(context) : tileWidget(context),
     );
   }
 }

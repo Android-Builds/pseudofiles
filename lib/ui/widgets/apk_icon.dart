@@ -10,9 +10,11 @@ class AppIcon extends StatefulWidget {
     Key? key,
     required this.path,
     required this.apk,
+    this.isCompact = false,
   }) : super(key: key);
   final String path;
   final APK apk;
+  final bool isCompact;
 
   @override
   _AppIconState createState() => _AppIconState();
@@ -37,10 +39,12 @@ class _AppIconState extends State<AppIcon> {
         if (snapshot.hasData) {
           APK apk = snapshot.data as APK;
           return apk.image.isNotEmpty
-              ? CircleAvatar(
-                  radius: size.width * 0.06,
-                  backgroundImage: MemoryImage(apk.image),
-                )
+              ? !widget.isCompact
+                  ? CircleAvatar(
+                      radius: size.width * 0.06,
+                      backgroundImage: MemoryImage(apk.image),
+                    )
+                  : Image.memory(apk.image)
               : defaultIcon();
         }
         return defaultIcon();
@@ -48,14 +52,16 @@ class _AppIconState extends State<AppIcon> {
     );
   }
 
-  Widget defaultIcon() => CircleAvatar(
-        radius: size.width * 0.06,
-        backgroundColor: FileManager.useMaterial3
-            ? Theme.of(context).colorScheme.secondary
-            : accentColor,
-        foregroundColor: FileManager.useMaterial3
-            ? Theme.of(context).colorScheme.background
-            : Theme.of(context).textTheme.bodyText1!.color,
-        child: const Icon(FontAwesomeIcons.android),
-      );
+  Widget defaultIcon() => !widget.isCompact
+      ? CircleAvatar(
+          radius: size.width * 0.06,
+          backgroundColor: FileManager.useMaterial3
+              ? Theme.of(context).colorScheme.secondary
+              : accentColor,
+          foregroundColor: FileManager.useMaterial3
+              ? Theme.of(context).colorScheme.background
+              : Theme.of(context).textTheme.bodyText1!.color,
+          child: const Icon(FontAwesomeIcons.android),
+        )
+      : const Icon(FontAwesomeIcons.android);
 }

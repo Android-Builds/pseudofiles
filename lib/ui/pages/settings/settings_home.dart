@@ -14,6 +14,7 @@ class SettingsHome extends StatefulWidget {
 
 class _SettingsHomeState extends State<SettingsHome> {
   bool _enabled = false;
+  static bool useCompactUi = false;
   @override
   Widget build(BuildContext context) {
     // List colorList = Theme.of(context).colorScheme.toString().split(',');
@@ -35,6 +36,19 @@ class _SettingsHomeState extends State<SettingsHome> {
                   setState(() => FileManager.useMaterial3 = value);
                   await Future.delayed(const Duration(milliseconds: 200));
                   BlocProvider.of<ThemeBloc>(context).add(ChangeTheme(value));
+                },
+              ),
+            ),
+            BlocProvider<ThemeBloc>(
+              create: (context) => ThemeBloc(),
+              child: SwitchListTile(
+                title: const Text('Use Compact Ui'),
+                value: useCompactUi,
+                onChanged: (value) async {
+                  setState(() => useCompactUi = value);
+                  await Future.delayed(const Duration(milliseconds: 200));
+                  BlocProvider.of<ThemeBloc>(context)
+                      .add(ChangeCompactness(value));
                 },
               ),
             ),
