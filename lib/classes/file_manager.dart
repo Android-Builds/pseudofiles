@@ -18,6 +18,8 @@ class FileManager {
   static bool descending = false;
   static bool useMaterial3 = false;
   static bool useCompactUi = false;
+  static bool keepNavbarHidden = false;
+  static ThemeMode themeMode = ThemeMode.system;
   static PageController pageController = PageController();
   static final GlobalKey<ScaffoldState> _globalKey = GlobalKey();
   static sortTypes sortType = sortTypes.name;
@@ -538,5 +540,15 @@ class FileManager {
       debugPrint(e.toString());
     }
     return [];
+  }
+
+  static Future<bool> grantUsagePermission() async {
+    try {
+      final bool result = await platform.invokeMethod('grantUsagePermission');
+      return result;
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
+    return false;
   }
 }

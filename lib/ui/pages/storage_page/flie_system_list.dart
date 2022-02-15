@@ -36,10 +36,8 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
             .hasContentDimensions &&
         FileManager.getStoragePageScrollController().offset !=
             FileManager.getStoragePageScrollController().initialScrollOffset) {
-      FileManager.getStoragePageScrollController().animateTo(
+      FileManager.getStoragePageScrollController().jumpTo(
         FileManager.getStoragePageScrollController().initialScrollOffset,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.linear,
       );
     }
   }

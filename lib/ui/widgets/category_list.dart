@@ -145,7 +145,7 @@ class CategoryList extends StatelessWidget {
                           ? Theme.of(context).colorScheme.secondary
                           : accentColor)
                       .withOpacity(0.4),
-                  child: Icon(
+                  child: FaIcon(
                     categories[index].icon,
                     size: size.width * 0.05,
                     color: FileManager.useMaterial3

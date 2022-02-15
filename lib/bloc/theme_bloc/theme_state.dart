@@ -16,3 +16,13 @@ class CompactnessChanged extends ThemeState {
   final bool useCompactUi;
   const CompactnessChanged(this.useCompactUi) : super(useCompactUi);
 }
+
+class ThemeModeChanged extends ThemeState {
+  final ThemeMode themeMode;
+  const ThemeModeChanged(this.themeMode) : super(themeMode);
+}
+
+class BottomNavbarHidden extends ThemeState {
+  final bool hideBottomNavbar;
+  const BottomNavbarHidden(this.hideBottomNavbar) : super(hideBottomNavbar);
+}

@@ -18,13 +18,19 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  late TabController homeTabController;
   final snackBarDuration = const Duration(seconds: 2);
   static DateTime popUpTime =
       DateTime.now().subtract(const Duration(seconds: 5));
 
   @override
   void initState() {
+    homeTabController = TabController(
+      initialIndex: 0,
+      length: 2,
+      vsync: this,
+    );
     super.initState();
   }
 
@@ -68,23 +74,48 @@ class _HomePageState extends State<HomePage> {
         builder: (context, state) {
           if (state is CompactnessChanged) {
             FileManager.useCompactUi = state.useCompactUi;
+          } else if (state is BottomNavbarHidden) {
+            FileManager.keepNavbarHidden = state.hideBottomNavbar;
           }
+          Widget body = PageView(
+            onPageChanged: (value) {
+              homeTabController.index = value;
+            },
+            physics: FileManager.keepNavbarHidden
+                ? const AlwaysScrollableScrollPhysics()
+                : const NeverScrollableScrollPhysics(),
+            controller: FileManager.pageController,
+            children: const [
+              DashBoard(),
+              StoragePage(),
+            ],
+          );
           return Scaffold(
               extendBody: true,
-              body: PageView(
-                physics: const NeverScrollableScrollPhysics(),
-                controller: FileManager.pageController,
-                children: const [
-                  DashBoard(),
-                  StoragePage(),
-                ],
-              ),
+              body: FileManager.keepNavbarHidden
+                  ? Stack(
+                      children: [
+                        body,
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TabPageSelector(
+                              indicatorSize: size.width * 0.02,
+                              controller: homeTabController,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : body,
               bottomNavigationBar: ValueListenableBuilder(
                 valueListenable: FileManager.selectedFiles,
                 builder: (context, value, child) {
                   List<FileSystemEntity> list = value as List<FileSystemEntity>;
                   return list.isEmpty
-                      ? (FileManager.useCompactUi
+                      ? (FileManager.useCompactUi ||
+                              FileManager.keepNavbarHidden
                           ? const SizedBox.shrink()
                           : const NavBarBottom())
                       : const ActionButtonsBar();

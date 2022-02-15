@@ -46,7 +46,7 @@ public class ApplicationHelper {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    void checkAndGrantUsagePermission() {
+    public static boolean grantUsagePermission(Context context) {
         AppOpsManager appOps = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
         int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), context.getPackageName());
         boolean granted = (mode == AppOpsManager.MODE_ALLOWED);
@@ -55,6 +55,7 @@ public class ApplicationHelper {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         }
+        return granted;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -66,7 +67,7 @@ public class ApplicationHelper {
          * intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
          * context.startActivity(intent);
          **/
-        checkAndGrantUsagePermission();
+        //checkAndGrantUsagePermission();
 
         PackageManager packageManager = context.getPackageManager();
         List<ApplicationInfo> packages = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);

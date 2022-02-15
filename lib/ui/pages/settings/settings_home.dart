@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
 
 import '../../../bloc/theme_bloc/theme_bloc.dart';
@@ -14,7 +15,7 @@ class SettingsHome extends StatefulWidget {
 
 class _SettingsHomeState extends State<SettingsHome> {
   bool _enabled = false;
-  static bool useCompactUi = false;
+  final prefBox = Hive.box('prefs');
   @override
   Widget build(BuildContext context) {
     // List colorList = Theme.of(context).colorScheme.toString().split(',');
@@ -33,6 +34,8 @@ class _SettingsHomeState extends State<SettingsHome> {
                 title: const Text('Use Material 3 Theme'),
                 value: FileManager.useMaterial3,
                 onChanged: (value) async {
+                  //TODO: Hive called here
+                  prefBox.put('useMaterial3', value);
                   setState(() => FileManager.useMaterial3 = value);
                   await Future.delayed(const Duration(milliseconds: 200));
                   BlocProvider.of<ThemeBloc>(context).add(ChangeTheme(value));
@@ -43,12 +46,27 @@ class _SettingsHomeState extends State<SettingsHome> {
               create: (context) => ThemeBloc(),
               child: SwitchListTile(
                 title: const Text('Use Compact Ui'),
-                value: useCompactUi,
+                value: FileManager.useCompactUi,
                 onChanged: (value) async {
-                  setState(() => useCompactUi = value);
+                  prefBox.put('useCompactUi', value);
+                  setState(() => FileManager.useCompactUi = value);
                   await Future.delayed(const Duration(milliseconds: 200));
                   BlocProvider.of<ThemeBloc>(context)
                       .add(ChangeCompactness(value));
+                },
+              ),
+            ),
+            BlocProvider<ThemeBloc>(
+              create: (context) => ThemeBloc(),
+              child: SwitchListTile(
+                title: const Text('Hide Bottom Navbar'),
+                value: FileManager.keepNavbarHidden,
+                onChanged: (value) async {
+                  prefBox.put('keepNavbarHidden', value);
+                  setState(() => FileManager.keepNavbarHidden = value);
+                  await Future.delayed(const Duration(milliseconds: 200));
+                  BlocProvider.of<ThemeBloc>(context)
+                      .add(HideBottomNavbar(value));
                 },
               ),
             ),

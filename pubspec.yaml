@@ -46,6 +46,7 @@ dependencies:
     git:
       url: https://github.com/zyzdev/flutter_icons_null_safety
   percent_indicator: ^3.4.0
+  flutter_svg: ^1.0.3
 
   #date
   intl: ^0.17.0
@@ -59,6 +60,10 @@ dependencies:
   #bloc
   flutter_bloc:
   equatable:
+
+  #database
+  hive:
+  hive_flutter:
 
 dev_dependencies:
   flutter_test:
@@ -81,6 +86,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

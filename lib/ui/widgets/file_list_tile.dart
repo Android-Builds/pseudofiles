@@ -89,7 +89,7 @@ class FileListTile extends StatelessWidget {
                 : Theme.of(context).textTheme.bodyText1!.color,
             child: Icon(iconData),
           )
-        : Icon(
+        : FaIcon(
             iconData,
             size: size.width * 0.27,
           );
@@ -110,6 +110,8 @@ class FileListTile extends StatelessWidget {
         return getIconWidget(context, FontAwesomeIcons.solidFileWord);
       case 'vnd.openxmlformats-officedocument.presentationml.presentation':
         return getIconWidget(context, FontAwesomeIcons.solidFilePowerpoint);
+      case 'vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        return getIconWidget(context, FontAwesomeIcons.solidFileExcel);
       case 'x-font-ttf':
         return getIconWidget(context, FontAwesomeIcons.font);
       case 'pdf':

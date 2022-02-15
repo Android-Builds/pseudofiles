@@ -77,7 +77,7 @@ class DashBoard extends StatelessWidget {
               ),
             ),
           ),
-          RecentFiles(count: 10, isCompact: useComactUi),
+          RecentFiles(count: 5, isCompact: useComactUi),
           // FileManager.useCompactUi
           //     ? const StorageList()
           //     : const SizedBox.shrink(),

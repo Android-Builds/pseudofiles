@@ -5,6 +5,9 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import com.google.android.material.color.DynamicColors;
+import com.google.android.material.color.MaterialColors;
+
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
@@ -78,11 +81,19 @@ public class MainActivity extends FlutterActivity {
                                         result.success(mediaHelper.getRecentFiles(call.argument("limit")));
                                         break;
                                     }
+                                    case "grantUsagePermission": {
+                                        result.success(ApplicationHelper.grantUsagePermission(getApplicationContext()));
+                                        break;
+                                    }
                                     default:
                                         throw new IllegalStateException("Unexpected value: " + call.method);
                                 }
                             }).start();
                         }
                 );
+    }
+
+    void getDynamicColors() {
+        int a = R.attr.dynamicColorThemeOverlay;
     }
 }

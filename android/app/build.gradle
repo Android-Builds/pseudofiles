@@ -39,6 +39,7 @@ android {
         targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -56,4 +57,5 @@ flutter {
 
 dependencies {
     implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'com.google.android.material:material:1.6.0-alpha02'
 }
