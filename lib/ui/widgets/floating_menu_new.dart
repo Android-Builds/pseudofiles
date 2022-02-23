@@ -80,7 +80,7 @@ class _FlaotingMenuButtonState extends State<FlaotingMenuButton>
               return FloatingActionButton(
                 tooltip: FileManager.useCompactUi.toString(),
                 backgroundColor: FileManager.useMaterial3
-                    ? Theme.of(context).colorScheme.secondary
+                    ? Theme.of(context).colorScheme.primary
                     : accentColor,
                 onPressed: animate,
                 child: CustomAnimatedIcon(

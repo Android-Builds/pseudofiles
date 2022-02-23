@@ -76,10 +76,10 @@ class _StorageGraphState extends State<StorageGraph> {
               percent: percentage,
               lineHeight: 7.0,
               progressColor: FileManager.useMaterial3
-                  ? Theme.of(context).colorScheme.secondary
+                  ? Theme.of(context).colorScheme.primary
                   : accentColor,
               backgroundColor: (FileManager.useMaterial3
-                      ? Theme.of(context).colorScheme.secondary
+                      ? Theme.of(context).colorScheme.primary
                       : accentColor)
                   .withOpacity(0.3),
             ),
@@ -135,14 +135,14 @@ class _StorageGraphState extends State<StorageGraph> {
               const SizedBox(height: 20.0),
               indicator(
                   (FileManager.useMaterial3
-                          ? Theme.of(context).colorScheme.secondary
+                          ? Theme.of(context).colorScheme.primary
                           : accentColor)
                       .withOpacity(0.3),
                   'Free Space'),
               const SizedBox(height: 5.0),
               indicator(
                   FileManager.useMaterial3
-                      ? Theme.of(context).colorScheme.secondary
+                      ? Theme.of(context).colorScheme.primary
                       : accentColor,
                   'Used Space'),
             ],
@@ -160,10 +160,10 @@ class _StorageGraphState extends State<StorageGraph> {
                 '% free'),
             circularStrokeCap: CircularStrokeCap.round,
             progressColor: FileManager.useMaterial3
-                ? Theme.of(context).colorScheme.secondary
+                ? Theme.of(context).colorScheme.primary
                 : accentColor,
             backgroundColor: (FileManager.useMaterial3
-                    ? Theme.of(context).colorScheme.secondary
+                    ? Theme.of(context).colorScheme.primary
                     : accentColor)
                 .withOpacity(0.3),
             footer: Padding(

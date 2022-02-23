@@ -29,7 +29,7 @@ class DirectoryListTile extends StatelessWidget {
               FileManager.selectedFiles.value
                   .any((element) => element.path == entity.path)
           ? (FileManager.useMaterial3
-                  ? Theme.of(context).colorScheme.secondary
+                  ? Theme.of(context).colorScheme.primary
                   : accentColor)
               .withOpacity(0.2)
           : null,
@@ -38,7 +38,7 @@ class DirectoryListTile extends StatelessWidget {
       leading: CircleAvatar(
         radius: 23.0,
         backgroundColor: FileManager.useMaterial3
-            ? Theme.of(context).colorScheme.secondary
+            ? Theme.of(context).colorScheme.primary
             : accentColor,
         foregroundColor: FileManager.useMaterial3
             ? Theme.of(context).colorScheme.background

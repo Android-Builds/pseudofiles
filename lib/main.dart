@@ -12,11 +12,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox('prefs');
-  runApp(const MyApp());
+  Map map = await FileManager.getDynamicColors();
+  runApp(MyApp(colorsMap: map));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key, required this.colorsMap}) : super(key: key);
+  final Map colorsMap;
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +26,13 @@ class MyApp extends StatelessWidget {
       create: (context) => ThemeBloc(),
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, state) {
-          return app();
+          return app(colorsMap);
         },
       ),
     );
   }
 
-  Widget app() {
+  Widget app(Map colorsMap) {
     //TODO: Hive called here
     final bool firstLaunch = Hive.box('prefs').get('firstLaunch') ?? true;
     FileManager.useMaterial3 = Hive.box('prefs').get('useMaterial3') ?? false;
@@ -43,9 +45,12 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       themeMode: FileManager.themeMode,
-      theme: FileManager.useMaterial3 ? lightThemeExp : lightTheme,
-      darkTheme: FileManager.useMaterial3 ? darkThemeExp : darkTheme,
-      //home: const HomePage(),
+      theme: FileManager.useMaterial3
+          ? lightThemeExp(Color(int.parse('0x${colorsMap['systemLight']}')))
+          : lightTheme,
+      darkTheme: FileManager.useMaterial3
+          ? darkThemeExp(Color(int.parse('0x${colorsMap['systemDark']}')))
+          : darkTheme,
       home: firstLaunch ? const OnboardingHome() : const HomePage(),
     );
   }

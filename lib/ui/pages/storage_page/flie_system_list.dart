@@ -189,7 +189,7 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
                     },
                     leading: CircleAvatar(
                       backgroundColor: FileManager.useMaterial3
-                          ? Theme.of(context).colorScheme.secondary
+                          ? Theme.of(context).colorScheme.primary
                           : accentColor,
                       foregroundColor: FileManager.useMaterial3
                           ? Theme.of(context).colorScheme.background

@@ -109,7 +109,7 @@ class _NavBarBottomState extends State<NavBarBottom> {
       decoration: BoxDecoration(
         color: selected
             ? (FileManager.useMaterial3
-                ? Theme.of(context).colorScheme.secondary
+                ? Theme.of(context).colorScheme.primary
                 : accentColor)
             : Colors.transparent,
         borderRadius: BorderRadius.circular(15.0),
@@ -122,7 +122,7 @@ class _NavBarBottomState extends State<NavBarBottom> {
           icon,
           color: !selected
               ? FileManager.useMaterial3
-                  ? Theme.of(context).colorScheme.secondary
+                  ? Theme.of(context).colorScheme.primary
                   : accentColor
               : FileManager.useMaterial3
                   ? Theme.of(context).colorScheme.background

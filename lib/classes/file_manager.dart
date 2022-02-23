@@ -551,4 +551,15 @@ class FileManager {
     }
     return false;
   }
+
+  static Future<Map> getDynamicColors() async {
+    try {
+      final Map? result = await platform.invokeMapMethod('getDynamicColors');
+      print(result);
+      return result!;
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
+    return {};
+  }
 }

@@ -56,7 +56,7 @@ class _AppIconState extends State<AppIcon> {
       ? CircleAvatar(
           radius: size.width * 0.06,
           backgroundColor: FileManager.useMaterial3
-              ? Theme.of(context).colorScheme.secondary
+              ? Theme.of(context).colorScheme.primary
               : accentColor,
           foregroundColor: FileManager.useMaterial3
               ? Theme.of(context).colorScheme.background

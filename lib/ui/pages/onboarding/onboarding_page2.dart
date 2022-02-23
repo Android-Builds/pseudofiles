@@ -35,7 +35,7 @@ class _OnboardingPage2State extends State<OnboardingPage2> {
       backgroundColor: FileManager.themeMode == themeMode
           ? (FileManager.useMaterial3
               ? MaterialStateColor.resolveWith(
-                  (states) => Theme.of(context).colorScheme.secondary)
+                  (states) => Theme.of(context).colorScheme.primary)
               : MaterialStateColor.resolveWith((states) => accentColor))
           : null,
       foregroundColor: FileManager.themeMode == themeMode
@@ -61,7 +61,9 @@ class _OnboardingPage2State extends State<OnboardingPage2> {
             const Spacer(),
             SvgPicture.asset(
               'assets/palatte.svg',
-              color: accentColor,
+              color: FileManager.useMaterial3
+                  ? Theme.of(context).colorScheme.primary
+                  : accentColor,
               height: 100,
               width: 100,
             ),

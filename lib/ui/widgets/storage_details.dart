@@ -134,7 +134,7 @@ class _StorageDetailsState extends State<StorageDetails>
                 children: [
                   indicator(
                     (FileManager.useMaterial3
-                            ? Theme.of(context).colorScheme.secondary
+                            ? Theme.of(context).colorScheme.primary
                             : accentColor)
                         .withOpacity(0.3),
                     'Free',
@@ -142,7 +142,7 @@ class _StorageDetailsState extends State<StorageDetails>
                   const SizedBox(width: 10.0),
                   indicator(
                     FileManager.useMaterial3
-                        ? Theme.of(context).colorScheme.secondary
+                        ? Theme.of(context).colorScheme.primary
                         : accentColor,
                     'Used',
                   ),

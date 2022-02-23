@@ -34,7 +34,7 @@ class _StoragePageState extends State<StoragePage> {
     borderStyle = UnderlineInputBorder(
         borderSide: BorderSide(
             color: FileManager.useMaterial3
-                ? Theme.of(context).colorScheme.secondary
+                ? Theme.of(context).colorScheme.primary
                 : accentColor));
     return showDialog<void>(
       context: context,

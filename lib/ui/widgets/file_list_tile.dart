@@ -59,7 +59,7 @@ class FileListTile extends StatelessWidget {
         ? CircleAvatar(
             radius: size.width * 0.06,
             backgroundColor: FileManager.useMaterial3
-                ? Theme.of(context).colorScheme.secondary
+                ? Theme.of(context).colorScheme.primary
                 : accentColor,
             foregroundColor: Theme.of(context).textTheme.bodyText1!.color,
             backgroundImage: FileImage(
@@ -82,7 +82,7 @@ class FileListTile extends StatelessWidget {
         ? CircleAvatar(
             radius: size.width * 0.06,
             backgroundColor: FileManager.useMaterial3
-                ? Theme.of(context).colorScheme.secondary
+                ? Theme.of(context).colorScheme.primary
                 : accentColor,
             foregroundColor: FileManager.useMaterial3
                 ? Theme.of(context).colorScheme.background
@@ -140,7 +140,7 @@ class FileListTile extends StatelessWidget {
               FileManager.selectedFiles.value
                   .any((element) => element.path == entity.path)
           ? (FileManager.useMaterial3
-                  ? Theme.of(context).colorScheme.secondary
+                  ? Theme.of(context).colorScheme.primary
                   : accentColor)
               .withOpacity(0.2)
           : null,

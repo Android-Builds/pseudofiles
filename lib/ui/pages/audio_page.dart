@@ -68,7 +68,7 @@ class _AudioPageState extends State<AudioPage> {
                           radius: size.width * 0.06,
                           child: const Icon(Icons.music_note),
                           backgroundColor: FileManager.useMaterial3
-                              ? Theme.of(context).colorScheme.secondary
+                              ? Theme.of(context).colorScheme.primary
                               : accentColor,
                           foregroundColor:
                               Theme.of(context).textTheme.bodyText1!.color,

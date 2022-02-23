@@ -36,10 +36,10 @@ class OngoingTaskOverlay extends StatelessWidget {
                 width: size.width * 0.9,
                 child: LinearProgressIndicator(
                   color: FileManager.useMaterial3
-                      ? Theme.of(context).colorScheme.secondary
+                      ? Theme.of(context).colorScheme.primary
                       : accentColor,
                   backgroundColor: (FileManager.useMaterial3
-                          ? Theme.of(context).colorScheme.secondary
+                          ? Theme.of(context).colorScheme.primary
                           : accentColor)
                       .withOpacity(0.4),
                 ),

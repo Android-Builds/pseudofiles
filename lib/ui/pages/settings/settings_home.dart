@@ -18,8 +18,8 @@ class _SettingsHomeState extends State<SettingsHome> {
   final prefBox = Hive.box('prefs');
   @override
   Widget build(BuildContext context) {
-    // List colorList = Theme.of(context).colorScheme.toString().split(',');
-    // print(darkScheme);
+    List colorList = Theme.of(context).colorScheme.toString().split(',');
+    print(Theme.of(context).colorScheme);
     // print(Theme.of(context).colorScheme);
     return Scaffold(
       appBar: AppBar(
@@ -70,6 +70,11 @@ class _SettingsHomeState extends State<SettingsHome> {
                 },
               ),
             ),
+            ElevatedButton(
+                onPressed: () async {
+                  FileManager.getDynamicColors();
+                },
+                child: const Text('Get Colors')),
             CustomSwitch(
               value: _enabled,
               onChanged: (bool val) {

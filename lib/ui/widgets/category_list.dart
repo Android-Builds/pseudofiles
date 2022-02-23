@@ -142,14 +142,14 @@ class CategoryList extends StatelessWidget {
                 CircleAvatar(
                   radius: size.width * 0.055,
                   backgroundColor: (FileManager.useMaterial3
-                          ? Theme.of(context).colorScheme.secondary
+                          ? Theme.of(context).colorScheme.primary
                           : accentColor)
                       .withOpacity(0.4),
                   child: FaIcon(
                     categories[index].icon,
                     size: size.width * 0.05,
                     color: FileManager.useMaterial3
-                        ? Theme.of(context).colorScheme.secondary
+                        ? Theme.of(context).colorScheme.primary
                         : accentColor,
                   ),
                 ),
@@ -222,14 +222,14 @@ class CategoryList extends StatelessWidget {
                   CircleAvatar(
                     radius: size.width * 0.055,
                     backgroundColor: (FileManager.useMaterial3
-                            ? Theme.of(context).colorScheme.secondary
+                            ? Theme.of(context).colorScheme.primary
                             : accentColor)
                         .withOpacity(0.4),
                     child: Icon(
                       categories[index].icon,
                       size: size.width * 0.05,
                       color: FileManager.useMaterial3
-                          ? Theme.of(context).colorScheme.secondary
+                          ? Theme.of(context).colorScheme.primary
                           : accentColor,
                     ),
                   ),

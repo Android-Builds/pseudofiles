@@ -123,7 +123,7 @@ class _OnboardingPage4State extends State<OnboardingPage4> {
             children: [
               FloatingActionButton(
                   backgroundColor: FileManager.useMaterial3
-                      ? Theme.of(context).colorScheme.secondary
+                      ? Theme.of(context).colorScheme.primary
                       : accentColor,
                   child: const Icon(MaterialIcons.keyboard_arrow_right),
                   onPressed: () {
