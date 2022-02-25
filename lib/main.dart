@@ -6,6 +6,7 @@ import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/ui/pages/onboarding/onboarding_home.dart';
 import 'package:pseudofiles/utils/themes.dart';
 
+import 'bloc/getFiles_bloc/getfiles_bloc.dart';
 import 'ui/pages/home_page.dart';
 
 void main() async {
@@ -22,8 +23,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ThemeBloc>(
-      create: (context) => ThemeBloc(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ThemeBloc>(
+          create: (context) => ThemeBloc(),
+        ),
+        BlocProvider<GetfilesBloc>(
+          create: (context) => GetfilesBloc(),
+        ),
+      ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, state) {
           return app(colorsMap);

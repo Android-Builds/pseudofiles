@@ -1,27 +1,25 @@
 part of 'getfiles_bloc.dart';
 
 abstract class GetfilesState extends Equatable {
-  const GetfilesState(this.files, this.path);
+  const GetfilesState(this.files);
   final List<FileSystemEntity> files;
-  final String path;
 
   @override
-  List<Object> get props => [files, path];
+  List<Object> get props => [files];
 }
 
 class GetfilesInitial extends GetfilesState {
-  GetfilesInitial() : super([], '');
+  GetfilesInitial() : super([]);
 }
 
 class GetfilesFetching extends GetfilesState {
-  GetfilesFetching() : super([], '');
+  GetfilesFetching() : super([]);
 }
 
 class GetfilesFetched extends GetfilesState {
-  const GetfilesFetched(List<FileSystemEntity> files, String path)
-      : super(files, path);
+  const GetfilesFetched(List<FileSystemEntity> files) : super(files);
 }
 
 class GetfilesError extends GetfilesState {
-  GetfilesError() : super([], '');
+  GetfilesError() : super([]);
 }

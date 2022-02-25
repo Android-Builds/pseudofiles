@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pseudofiles/classes/enums/operation_enum.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/utils/constants.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'directory_list_tile.dart';
 import 'file_list_tile.dart';
@@ -113,71 +114,88 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
               borderRadius: BorderRadius.circular(20.0),
             ),
             child: FittedBox(
-              child: list.isNotEmpty
-                  ? Row(
-                      children: [
-                        navBarIcon(Icons.paste, () {
-                          FileManager.cutOrCopyFilesAndDirs(
-                              FileManager.operationType);
-                        }),
-                        navBarIcon(Icons.create_new_folder_outlined, () {}),
-                        navBarIcon(Icons.task, () {
-                          showClipboardContents();
-                        }),
-                      ],
-                    )
-                  : Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        navBarIcon(Icons.copy, () {
-                          FileManager.operationType = OperationType.copye;
-                          FileManager.selectedFilesForOperation.value =
-                              List.from(FileManager.selectedFiles.value);
-                        }),
-                        navBarIcon(Icons.cut, () {
-                          FileManager.operationType = OperationType.move;
-                          FileManager.selectedFilesForOperation.value =
-                              List.from(FileManager.selectedFiles.value);
-                        }),
-                        navBarIcon(Icons.delete, () {
-                          confirmDeleteDialog();
-                        }),
-                        ValueListenableBuilder(
-                          valueListenable: FileManager.selectedFiles,
-                          builder: (_, value, child) =>
-                              (value as List<FileSystemEntity>).length == 1
-                                  ? navBarIcon(Icons.edit, () {})
-                                  : const SizedBox.shrink(),
-                        ),
-                        navBarIcon(Icons.share, () {}),
-                        navBarIcon(Icons.select_all, () async {
-                          List<FileSystemEntity> list =
-                              await FileManager.getDirectories();
-                          if (FileManager.selectedFiles.value.length ==
-                              list.length) {
-                            FileManager.selectedFiles.value =
-                                List.from(FileManager.selectedFiles.value)
-                                  ..clear();
-                          } else {
-                            FileManager.selectedFiles.value =
-                                List.from(FileManager.selectedFiles.value)
-                                  ..clear();
-                            FileManager.selectedFiles.value =
-                                List.from(FileManager.selectedFiles.value)
-                                  ..addAll(list);
-                          }
-                        }),
-                        navBarIcon(Icons.more_vert, () {}),
-                      ],
-                    ),
+              child: list.isNotEmpty ? operationWidget() : toolsWidget(),
             ),
           );
         });
   }
 
-  Widget navBarIcon(IconData icon, Function onTap) => IconButton(
-        onPressed: () => onTap(),
+  Widget toolsWidget() => Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          navBarIcon(Icons.copy, () {
+            FileManager.operationType = OperationType.copye;
+            FileManager.selectedFilesForOperation.value =
+                List.from(FileManager.selectedFiles.value);
+          }),
+          navBarIcon(Icons.cut, () {
+            FileManager.operationType = OperationType.move;
+            FileManager.selectedFilesForOperation.value =
+                List.from(FileManager.selectedFiles.value);
+          }),
+          navBarIcon(Icons.delete, () {
+            confirmDeleteDialog();
+          }),
+          ValueListenableBuilder(
+              valueListenable: FileManager.selectedFiles,
+              builder: (_, value, child) => Row(
+                    children: [
+                      navBarIcon(
+                        Icons.edit,
+                        () {},
+                        disabled: (value as List<FileSystemEntity>).length != 1,
+                      ),
+                      navBarIcon(
+                        Icons.share,
+                        () {
+                          Share.shareFiles(FileManager.selectedFiles.value
+                              .whereType<File>()
+                              .toList()
+                              .map((e) => e.path)
+                              .toList());
+                        },
+                        disabled: (value).any(
+                          (element) => element is Directory,
+                        ),
+                      ),
+                    ],
+                  )),
+          navBarIcon(Icons.select_all, () async {
+            List<FileSystemEntity> list = await FileManager.getDirectories();
+            if (FileManager.selectedFiles.value.length == list.length) {
+              FileManager.selectedFiles.value =
+                  List.from(FileManager.selectedFiles.value)..clear();
+            } else {
+              FileManager.selectedFiles.value =
+                  List.from(FileManager.selectedFiles.value)..clear();
+              FileManager.selectedFiles.value =
+                  List.from(FileManager.selectedFiles.value)..addAll(list);
+            }
+          }),
+          navBarIcon(Icons.more_vert, () {}),
+        ],
+      );
+
+  Widget operationWidget() => Row(
+        children: [
+          navBarIcon(Icons.paste, () {
+            FileManager.cutOrCopyFilesAndDirs(FileManager.operationType);
+          }),
+          navBarIcon(Icons.create_new_folder_outlined, () {}),
+          navBarIcon(Icons.task, () {
+            showClipboardContents();
+          }),
+        ],
+      );
+
+  Widget navBarIcon(
+    IconData icon,
+    Function() onTap, {
+    bool disabled = false,
+  }) =>
+      IconButton(
+        onPressed: disabled ? null : onTap,
         icon: Icon(
           icon,
           size: size.width * 0.05,

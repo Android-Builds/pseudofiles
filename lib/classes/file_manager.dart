@@ -68,7 +68,7 @@ class FileManager {
     }
   }
 
-  static List<String> getDirectoryNames() {
+  static List<String> getDirectoryNames({bool isArchive = false}) {
     if (_currentPath.value.isEmpty) {
       return ['Internal'];
     }
@@ -83,7 +83,8 @@ class FileManager {
     if (pathSplit.last == '') {
       pathSplit.removeLast();
     }
-    return pathSplit;
+
+    return isArchive ? pathSplit.sublist(3, pathSplit.length) : pathSplit;
   }
 
   static String getCurrentDir() {
@@ -262,9 +263,10 @@ class FileManager {
     changeDirectory((await getRootDirectory()));
   }
 
-  static Future<bool> isRootDirectory() async {
+  static Future<bool> isRootDirectory({String path = ''}) async {
     return (await getRootDirectories()).any((element) {
-      return _currentPath.value
+      String dirName = path.isNotEmpty ? path : _currentPath.value;
+      return dirName
           .split(Platform.pathSeparator)
           .toSet()
           .difference(element.path.split(Platform.pathSeparator).toSet())
@@ -272,7 +274,12 @@ class FileManager {
     });
   }
 
-  static void goToParentDirectory() async {
+  static void goToDirectory(String currentDir) {
+    _currentPath.value =
+        path.join(_currentPath.value.split(currentDir)[0], currentDir);
+  }
+
+  static Future<void> goToParentDirectory() async {
     if (!(await isRootDirectory())) {
       changeDirectory(Directory(_currentPath.value).parent.path);
     }
@@ -377,14 +384,19 @@ class FileManager {
   //   }
   // }
 
-  static Future<List<List<FileSystemEntity>>> getEntities() async {
+  static Future<List<List<FileSystemEntity>>> getEntities(
+      {String path = ''}) async {
     List<FileSystemEntity> directories = [];
-    if (_currentPath.value.isEmpty) {
-      List<Directory> rootDirectories = await getRootDirectories();
-      directories = rootDirectories[0].listSync();
-      _currentPath.value = rootDirectories[0].path;
+    if (path.isEmpty) {
+      if (_currentPath.value.isEmpty) {
+        List<Directory> rootDirectories = await getRootDirectories();
+        directories = rootDirectories[0].listSync();
+        _currentPath.value = rootDirectories[0].path;
+      } else {
+        directories = Directory(_currentPath.value).listSync();
+      }
     } else {
-      directories = Directory(_currentPath.value).listSync();
+      directories = Directory(path).listSync();
     }
     final List<FileSystemEntity> files =
         directories.whereType<File>().toList().where((element) {
@@ -405,13 +417,14 @@ class FileManager {
     return [folders, files];
   }
 
-  static Future<String> getFilesAndFolderCount() async {
-    List<List<FileSystemEntity>> filesAndDirs = await getEntities();
+  static Future<String> getFilesAndFolderCount({String path = ''}) async {
+    List<List<FileSystemEntity>> filesAndDirs = await getEntities(path: path);
     return '${filesAndDirs[0].length} folders, ${filesAndDirs[1].length} files';
   }
 
-  static Future<List<FileSystemEntity>> getDirectories() async {
-    List<List<FileSystemEntity>> filesAndDirs = await getEntities();
+  static Future<List<FileSystemEntity>> getDirectories(
+      {String path = ''}) async {
+    List<List<FileSystemEntity>> filesAndDirs = await getEntities(path: path);
     return getSortedList(filesAndDirs[1], filesAndDirs[0], sortType);
   }
 
@@ -555,7 +568,6 @@ class FileManager {
   static Future<Map> getDynamicColors() async {
     try {
       final Map? result = await platform.invokeMapMethod('getDynamicColors');
-      print(result);
       return result!;
     } on PlatformException catch (e) {
       debugPrint(e.toString());

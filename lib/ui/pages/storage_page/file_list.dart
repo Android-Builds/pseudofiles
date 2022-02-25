@@ -42,8 +42,7 @@ class FileList extends StatelessWidget {
         if (index == 0) {
           return ListTile(
             onTap: () {
-              BlocProvider.of<GetfilesBloc>(context)
-                  .add(GetAllFiles(Directory(path).parent.path));
+              BlocProvider.of<GetfilesBloc>(context).add(const GetAllFiles());
             },
             leading: CircleAvatar(
               backgroundColor: Colors.blue,
@@ -58,8 +57,7 @@ class FileList extends StatelessWidget {
           return ListTile(
             onTap: () {
               if (files[index - 1] is Directory) {
-                BlocProvider.of<GetfilesBloc>(context)
-                    .add(GetAllFiles(files[index - 1].path));
+                BlocProvider.of<GetfilesBloc>(context).add(const GetAllFiles());
               }
             },
             leading: files[index - 1] is File &&

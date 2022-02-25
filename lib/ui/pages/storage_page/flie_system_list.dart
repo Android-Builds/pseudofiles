@@ -1,19 +1,26 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_file/open_file.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
 
+import '../../../bloc/getFiles_bloc/getfiles_bloc.dart';
 import '../../widgets/app_bar.dart';
 import '../../widgets/directory_list_tile.dart';
 import '../../widgets/file_list_tile.dart';
 import '../../widgets/persistant_header.dart';
 
 class FileSystemEntityList extends StatefulWidget {
-  const FileSystemEntityList({Key? key, required this.list}) : super(key: key);
+  const FileSystemEntityList({
+    Key? key,
+    required this.list,
+    this.isArchivePage = false,
+  }) : super(key: key);
 
   final List<FileSystemEntity> list;
+  final bool isArchivePage;
 
   @override
   State<FileSystemEntityList> createState() => _FileSystemEntityListState();
@@ -75,6 +82,7 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
   void openEntity(FileSystemEntity entity) async {
     if (entity is Directory) {
       FileManager.changeDirectory(entity.path);
+      BlocProvider.of<GetfilesBloc>(context).add(const GetAllFiles());
     } else {
       await OpenFile.open(entity.path);
     }
@@ -115,8 +123,11 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
       child: CustomScrollView(
         controller: FileManager.getStoragePageScrollController(),
         slivers: [
-          SliverPersistentHeader(
-              delegate: PersistentHeader(widget: const CustomAppBar())),
+          !widget.isArchivePage
+              ? SliverPersistentHeader(
+                  delegate: PersistentHeader(widget: const CustomAppBar()),
+                )
+              : const SliverToBoxAdapter(child: SizedBox.shrink()),
           SliverPersistentHeader(
             pinned: true,
             delegate: PersistentHeader(
@@ -129,8 +140,12 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
                   shrinkWrap: true,
                   controller: scrollController,
                   scrollDirection: Axis.horizontal,
-                  itemCount: FileManager.getDirectoryNames().length,
+                  itemCount: FileManager.getDirectoryNames(
+                    isArchive: widget.isArchivePage,
+                  ).length,
                   itemBuilder: (context, index) {
+                    List<String> dirNames = FileManager.getDirectoryNames(
+                        isArchive: widget.isArchivePage);
                     if (scrollController.positions.last.hasContentDimensions &&
                         scrollController.offset <
                             scrollController.position.maxScrollExtent) {
@@ -144,32 +159,32 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
                       children: [
                         TextButton(
                           onPressed: () {
-                            if (FileManager.getDirectoryNames()[index] ==
-                                    'Internal' ||
-                                FileManager.getDirectoryNames()[index] ==
-                                    'SD Card') {
+                            if (dirNames[index] == 'Internal' ||
+                                dirNames[index] == 'SD Card') {
                               FileManager.goToRootDirectory();
                             } else {
-                              FileManager.goToParentDirectory();
+                              FileManager.goToDirectory(dirNames[index]);
                             }
+                            BlocProvider.of<GetfilesBloc>(context)
+                                .add(const GetAllFiles());
                           },
                           child: Text(
-                            FileManager.getDirectoryNames()[index],
+                            dirNames[index],
                             style: TextStyle(
-                              color: FileManager.getDirectoryNames()[index] ==
-                                      FileManager.getCurrentDir()
-                                  ? FileManager.useMaterial3
-                                      ? null
-                                      : accentColor
-                                  : Theme.of(context)
-                                      .textTheme
-                                      .bodyText1!
-                                      .color,
+                              color:
+                                  dirNames[index] == FileManager.getCurrentDir()
+                                      ? FileManager.useMaterial3
+                                          ? null
+                                          : accentColor
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color,
                               fontSize: size.width * 0.04,
                             ),
                           ),
                         ),
-                        index == FileManager.getDirectoryNames().length - 1
+                        index == dirNames.length - 1
                             ? const SizedBox.shrink()
                             : const Icon(Icons.arrow_right),
                       ],
@@ -184,8 +199,17 @@ class _FileSystemEntityListState extends State<FileSystemEntityList> {
               (context, index) {
                 if (index == 0) {
                   return ListTile(
-                    onTap: () {
-                      FileManager.goToParentDirectory();
+                    onTap: () async {
+                      if (widget.isArchivePage &&
+                          Directory(FileManager.currentPath.value)
+                              .parent
+                              .path
+                              .endsWith('cache')) {
+                        return;
+                      }
+                      await FileManager.goToParentDirectory();
+                      BlocProvider.of<GetfilesBloc>(context)
+                          .add(const GetAllFiles());
                     },
                     leading: CircleAvatar(
                       backgroundColor: FileManager.useMaterial3

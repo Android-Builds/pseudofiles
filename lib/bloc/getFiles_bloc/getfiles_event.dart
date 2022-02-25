@@ -8,7 +8,5 @@ abstract class GetfilesEvent extends Equatable {
 }
 
 class GetAllFiles extends GetfilesEvent {
-  final String directory;
-
-  const GetAllFiles(this.directory);
+  const GetAllFiles();
 }

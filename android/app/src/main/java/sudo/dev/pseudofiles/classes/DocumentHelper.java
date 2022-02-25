@@ -37,13 +37,15 @@ public class DocumentHelper {
     }
 
     public static String getDocumentsSize(Context context) {
-        long size = 0L;
+        long totalSize = 0L;
         String[] projection = {MediaStore.Files.FileColumns.SIZE};
         Cursor cursor = getCursor(projection, context);
         while (cursor.moveToNext()) {
-            size += Long.parseLong(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)));
+            String docSize = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE));
+            if (docSize == null)  docSize = "0";
+            totalSize += Long.parseLong(docSize);
         }
-        return Formatter.formatFileSize(context,size);
+        return Formatter.formatFileSize(context,totalSize);
     }
 
     public static List<String> getAllDocuments(Context context) {

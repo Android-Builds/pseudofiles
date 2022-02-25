@@ -4,11 +4,14 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pseudofiles/classes/apk.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
+import 'package:pseudofiles/ui/pages/archive_page.dart';
 import 'package:pseudofiles/ui/widgets/thumbnail_image.dart';
 import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
+import 'package:archive/archive_io.dart';
 
 import 'apk_icon.dart';
 
@@ -133,6 +136,24 @@ class FileListTile extends StatelessWidget {
     }
   }
 
+  tempExtractZip(String zipPath, String dirPath) {
+    final bytes = File(zipPath).readAsBytesSync();
+    Archive archive = ZipDecoder().decodeBytes(bytes);
+
+    for (ArchiveFile file in archive) {
+      final filename = file.name;
+      if (file.isFile) {
+        final data = file.content as List<int>;
+        File(FileManager.joinPaths(dirPath, filename))
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(data);
+      } else {
+        Directory(FileManager.joinPaths(dirPath, filename))
+            .create(recursive: true);
+      }
+    }
+  }
+
   Widget tileWidget(BuildContext context) {
     FileStat fileStat = entity.statSync();
     return ListTile(
@@ -145,7 +166,26 @@ class FileListTile extends StatelessWidget {
               .withOpacity(0.2)
           : null,
       onLongPress: () => longPressAction(entity),
-      onTap: () => oneTapAction(entity),
+      onTap: () async {
+        if (FileManager.getFileName(entity).endsWith('.zip')) {
+          Directory tempDir = await getTemporaryDirectory();
+          String dirName = FileManager.joinPaths(
+              tempDir.path, FileManager.getFileName(entity));
+          if (!Directory(dirName).existsSync()) {
+            Directory(dirName).createSync();
+          }
+          tempExtractZip(entity.path, dirName);
+          FileManager.changeDirectory(dirName);
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => ArchivePage(
+              path: dirName,
+              archivePath: entity.path,
+            ),
+          ));
+        } else {
+          oneTapAction(entity);
+        }
+      },
       leading: getLeadingIcon(context, FileManager.getMimeType(entity.path)),
       title: Text(FileManager.getFileName(entity)),
       subtitle: Row(

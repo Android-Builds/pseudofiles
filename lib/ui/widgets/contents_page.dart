@@ -18,13 +18,11 @@ class _ContentsPageState extends State<ContentsPage> {
   List<String> dirPaths = ['Internal'];
 
   goToDir(String path) {
-    BlocProvider.of<GetfilesBloc>(context)
-        .add(GetAllFiles(Directory(path).parent.path));
+    BlocProvider.of<GetfilesBloc>(context).add(const GetAllFiles());
   }
 
   goToBackDir(String path) {
-    BlocProvider.of<GetfilesBloc>(context)
-        .add(GetAllFiles(Directory(path).parent.path));
+    BlocProvider.of<GetfilesBloc>(context).add(const GetAllFiles());
   }
 
   Future<bool> _onWillPop(String path) async {
@@ -54,7 +52,7 @@ class _ContentsPageState extends State<ContentsPage> {
 
   @override
   void initState() {
-    BlocProvider.of<GetfilesBloc>(context).add(const GetAllFiles(''));
+    BlocProvider.of<GetfilesBloc>(context).add(const GetAllFiles());
     super.initState();
   }
 
@@ -67,7 +65,7 @@ class _ContentsPageState extends State<ContentsPage> {
             child: CircularProgressIndicator(),
           );
         } else if (state is GetfilesFetched) {
-          return storageWidget(state.files, state.path);
+          return storageWidget(state.files, '');
         } else {
           return const Center(
             child: Text('Error'),
