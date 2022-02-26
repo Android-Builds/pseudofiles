@@ -155,7 +155,8 @@ class _ArchivePageState extends State<ArchivePage> {
                 child: const Text('Select'),
                 onPressed: () {
                   final inputStream = InputFileStream(widget.archivePath);
-                  final archive = ZipDecoder().decodeBuffer(inputStream);
+                  final Archive archive =
+                      ZipDecoder().decodeBuffer(inputStream);
                   String newDir = FileManager.joinPaths(dirPath,
                       FileManager.getFileName(File(widget.archivePath)));
                   Directory(newDir).createSync();

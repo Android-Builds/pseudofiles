@@ -40,9 +40,9 @@ class _AppIconState extends State<AppIcon> {
           APK apk = snapshot.data as APK;
           return apk.image.isNotEmpty
               ? !widget.isCompact
-                  ? CircleAvatar(
-                      radius: size.width * 0.06,
-                      backgroundImage: MemoryImage(apk.image),
+                  ? Image.memory(
+                      apk.image,
+                      width: size.width * 0.12,
                     )
                   : Image.memory(apk.image)
               : defaultIcon();

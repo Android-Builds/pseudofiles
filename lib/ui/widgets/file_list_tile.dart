@@ -139,16 +139,17 @@ class FileListTile extends StatelessWidget {
   tempExtractZip(String zipPath, String dirPath) {
     final bytes = File(zipPath).readAsBytesSync();
     Archive archive = ZipDecoder().decodeBytes(bytes);
-
     for (ArchiveFile file in archive) {
-      final filename = file.name;
+      final fileName = file.name;
+      //RegExp regExp = RegExp(r'([a-zA-Z0-9])*\.+([a-zA-Z0-9])*');
       if (file.isFile) {
-        final data = file.content as List<int>;
-        File(FileManager.joinPaths(dirPath, filename))
+        //File.fromRawPath(file.rawContent!.toUint8List()).openRead();
+        final List<int> data = file.content as List<int>;
+        File(FileManager.joinPaths(dirPath, fileName))
           ..createSync(recursive: true)
           ..writeAsBytesSync(data);
       } else {
-        Directory(FileManager.joinPaths(dirPath, filename))
+        Directory(FileManager.joinPaths(dirPath, fileName))
             .create(recursive: true);
       }
     }

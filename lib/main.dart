@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
     FileManager.themeMode =
         ThemeMode.values.byName(Hive.box('prefs').get('themeMode') ?? 'system');
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'PseudoFiles',
       debugShowCheckedModeBanner: false,
       themeMode: FileManager.themeMode,
       theme: FileManager.useMaterial3
