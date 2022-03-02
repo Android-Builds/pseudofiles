@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/utils/constants.dart';
 
+import '../../utils/themes.dart';
 import '../pages/settings/settings_home.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -13,29 +15,42 @@ class AppDrawer extends StatelessWidget {
       backgroundColor: Theme.of(context).backgroundColor,
       child: ListView(
         children: [
+          const SizedBox(height: 10.0),
           Container(
             padding: const EdgeInsets.all(10.0),
             alignment: Alignment.bottomLeft,
-            height: size.height * 0.2,
-            //color: Theme.of(context).backgroundColor,
-            child: Row(
+            height: size.height * 0.3,
+            child: Column(
               children: [
-                Text(
-                  'Pseudo Files',
-                  style: TextStyle(
-                    fontSize: size.width * 0.05,
-                    fontWeight: FontWeight.bold,
-                  ),
+                const Spacer(),
+                SvgPicture.asset(
+                  'assets/icon.svg',
+                  height: size.height * 0.15,
+                  color: FileManager.useMaterial3
+                      ? Theme.of(context).colorScheme.primary
+                      : accentColor,
                 ),
                 const Spacer(),
-                IconButton(
-                  onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SettingsHome(),
-                      )),
-                  icon: const Icon(Icons.settings),
-                )
+                Row(
+                  children: [
+                    Text(
+                      'Pseudo Files',
+                      style: TextStyle(
+                        fontSize: size.width * 0.05,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SettingsHome(),
+                          )),
+                      icon: const Icon(Icons.settings),
+                    )
+                  ],
+                ),
               ],
             ),
           ),
@@ -68,6 +83,7 @@ class AppDrawer extends StatelessWidget {
           ListView.builder(
             shrinkWrap: true,
             itemCount: categories.length,
+            physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (_, index) => ListTile(
               leading: Icon(categories[index].icon),
               title: Text(categories[index].name),
