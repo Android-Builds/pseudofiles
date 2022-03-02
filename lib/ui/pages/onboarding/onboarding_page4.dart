@@ -122,6 +122,7 @@ class _OnboardingPage4State extends State<OnboardingPage4> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               FloatingActionButton(
+                  heroTag: 'move to home',
                   backgroundColor: FileManager.useMaterial3
                       ? Theme.of(context).colorScheme.primary
                       : accentColor,

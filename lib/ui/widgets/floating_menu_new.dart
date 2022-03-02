@@ -78,6 +78,7 @@ class _FlaotingMenuButtonState extends State<FlaotingMenuButton>
           children: List.generate(widget.items.length + 1, (index) {
             if (index == widget.items.length) {
               return FloatingActionButton(
+                heroTag: 'floating menu button',
                 tooltip: FileManager.useCompactUi.toString(),
                 backgroundColor: FileManager.useMaterial3
                     ? Theme.of(context).colorScheme.primary
@@ -156,7 +157,8 @@ class MiniButtons extends StatelessWidget {
           mini: true,
           onPressed: onTap,
           child: Icon(icon),
-          tooltip: label + FileManager.useCompactUi.toString(),
+          heroTag: label,
+          tooltip: label,
         ),
         const SizedBox(width: 5.0),
       ],
