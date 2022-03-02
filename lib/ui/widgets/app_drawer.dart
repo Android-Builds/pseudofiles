@@ -15,9 +15,8 @@ class AppDrawer extends StatelessWidget {
       backgroundColor: Theme.of(context).backgroundColor,
       child: ListView(
         children: [
-          const SizedBox(height: 10.0),
+          const SizedBox(height: 20.0),
           Container(
-            padding: const EdgeInsets.all(10.0),
             alignment: Alignment.bottomLeft,
             height: size.height * 0.3,
             child: Column(
@@ -31,25 +30,29 @@ class AppDrawer extends StatelessWidget {
                       : accentColor,
                 ),
                 const Spacer(),
-                Row(
-                  children: [
-                    Text(
-                      'Pseudo Files',
-                      style: TextStyle(
-                        fontSize: size.width * 0.05,
-                        fontWeight: FontWeight.bold,
-                      ),
+                ListTile(
+                  title: Text(
+                    'Pseudo Files',
+                    style: TextStyle(
+                      fontSize: size.width * 0.05,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const Spacer(),
-                    IconButton(
-                      onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SettingsHome(),
-                          )),
-                      icon: const Icon(Icons.settings),
-                    )
-                  ],
+                  ),
+                  subtitle: Text(
+                    'v 1.1.0',
+                    style: TextStyle(
+                      fontSize: size.width * 0.025,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  trailing: IconButton(
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SettingsHome(),
+                        )),
+                    icon: const Icon(Icons.settings),
+                  ),
                 ),
               ],
             ),
