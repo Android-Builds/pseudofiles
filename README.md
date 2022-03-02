@@ -20,7 +20,7 @@ Some portion of the code for this project was inspired from [file_manager](https
 - [x] Delete Files/Folders.
 - [x] Rename Files/Folders.
 - [x] Dark/White Mode.
-- [ ] Material 3 Support
+- [x] Material 3 Support
 
 ## ScreenShots
 <img src="screenshots/1.jpg" width="200"> <img src="screenshots/2.jpg" width="200"> <img src="screenshots/3.jpg" width="200">
