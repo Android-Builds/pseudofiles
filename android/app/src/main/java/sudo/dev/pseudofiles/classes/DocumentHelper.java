@@ -15,7 +15,7 @@ public class DocumentHelper {
     private static Cursor getCursor(String[] projection, Context context) {
         ContentResolver contentResolver = context.getContentResolver();
         Uri uri = MediaStore.Files.getContentUri("external");
-        String selection = null;
+        String selection;
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="

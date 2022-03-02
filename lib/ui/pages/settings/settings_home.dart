@@ -72,7 +72,7 @@ class _SettingsHomeState extends State<SettingsHome> {
             ),
             ElevatedButton(
                 onPressed: () async {
-                  FileManager.getDynamicColors();
+                  FileManager.getSearchedFiles('Magisk');
                 },
                 child: const Text('Get Colors')),
             CustomSwitch(

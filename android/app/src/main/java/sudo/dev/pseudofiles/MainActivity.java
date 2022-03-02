@@ -33,6 +33,7 @@ import io.flutter.plugin.common.MethodChannel;
 import sudo.dev.pseudofiles.classes.ApplicationHelper;
 import sudo.dev.pseudofiles.classes.DocumentHelper;
 import sudo.dev.pseudofiles.classes.MediaHelper;
+import sudo.dev.pseudofiles.classes.SearchHelper;
 import sudo.dev.pseudofiles.classes.StorageHelper;
 
 public class MainActivity extends FlutterActivity {
@@ -106,6 +107,10 @@ public class MainActivity extends FlutterActivity {
                                     }
                                     case "getDynamicColors": {
                                         result.success(getDynamicColors());
+                                        break;
+                                    }
+                                    case "getSearchedFiles": {
+                                        result.success(SearchHelper.getSearchedFiles(call.argument("fileName"), this));
                                         break;
                                     }
                                     default:

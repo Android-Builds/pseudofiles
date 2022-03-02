@@ -16,3 +16,5 @@ Map allStorageMap = {
 };
 
 Map<String, Uint8List> appIcons = <String, Uint8List>{};
+
+List<String> suggestions = [];

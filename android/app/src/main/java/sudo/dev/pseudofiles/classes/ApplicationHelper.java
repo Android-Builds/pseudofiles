@@ -60,15 +60,6 @@ public class ApplicationHelper {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public String getInstalledAppSizes() {
-        /**
-         * Need to add the following intent when launching the app for the first time for the app to correctly fetch app size;
-         *
-         * Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-         * intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-         * context.startActivity(intent);
-         **/
-        //checkAndGrantUsagePermission();
-
         PackageManager packageManager = context.getPackageManager();
         List<ApplicationInfo> packages = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
         long size = 0L;
@@ -84,15 +75,12 @@ public class ApplicationHelper {
 //                Log.d("AppLog", "getFreeBytes:" + Formatter.formatShortFileSize(context, storageStatsManager.getFreeBytes(uuid)));
 //                Log.d("AppLog", "getTotalBytes:" + Formatter.formatShortFileSize(context, storageStatsManager.getTotalBytes(uuid)));
 //                Log.d("AppLog", "storage stats for app of package name:" + applicationInfo.packageName + " : ");
-
                 final StorageStats storageStats = storageStatsManager.queryStatsForPackage(uuid, applicationInfo.packageName, user);
                 size += storageStats.getAppBytes() + storageStats.getCacheBytes() + storageStats.getDataBytes();
 //                Log.d("AppLog", "getAppBytes:" + Formatter.formatShortFileSize(context, storageStats.getAppBytes()) +
 //                        " getCacheBytes:" + Formatter.formatShortFileSize(context, storageStats.getCacheBytes()) +
 //                        " getDataBytes:" + Formatter.formatShortFileSize(context, storageStats.getDataBytes()));
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (PackageManager.NameNotFoundException | IOException e) {
                 e.printStackTrace();
             }
 //            for (StorageVolume storageVolume : storageVolumes) {

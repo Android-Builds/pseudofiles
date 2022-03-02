@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
+import 'package:pseudofiles/classes/serach_delegate.dart';
 import 'package:pseudofiles/utils/constants.dart';
 
 import 'custom_animated_icon.dart';
@@ -66,7 +67,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
       ),
-      actions: const [Menu()],
+      actions: [
+        IconButton(
+          onPressed: () {
+            showSearch(context: context, delegate: FileSearch());
+          },
+          icon: const Icon(Icons.search),
+        ),
+        const Menu(),
+      ],
       bottom: bottom,
     );
   }

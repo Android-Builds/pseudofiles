@@ -574,4 +574,15 @@ class FileManager {
     }
     return {};
   }
+
+  static Future<List<String>> getSearchedFiles(String fileName) async {
+    try {
+      final List result = await platform
+          .invokeMethod('getSearchedFiles', {'fileName': fileName});
+      return result.map((e) => e.toString()).toList();
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
+    return [];
+  }
 }

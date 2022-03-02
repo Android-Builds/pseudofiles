@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pseudofiles/bloc/theme_bloc/theme_bloc.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/ui/pages/onboarding/onboarding_home.dart';
+import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
 
 import 'bloc/getFiles_bloc/getfiles_bloc.dart';
@@ -13,6 +14,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox('prefs');
+  await Hive.openBox('searchSuggestions');
   Map map = await FileManager.getDynamicColors();
   runApp(MyApp(colorsMap: map));
 }
@@ -43,6 +45,8 @@ class MyApp extends StatelessWidget {
   Widget app(Map colorsMap) {
     //TODO: Hive called here
     final bool firstLaunch = Hive.box('prefs').get('firstLaunch') ?? true;
+    suggestions =
+        (Hive.box('searchSuggestions').get('suggestions') ?? "").split(',');
     FileManager.useMaterial3 = Hive.box('prefs').get('useMaterial3') ?? false;
     FileManager.useCompactUi = Hive.box('prefs').get('useCompactUi') ?? false;
     FileManager.keepNavbarHidden =
