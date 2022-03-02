@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import '../classes/categories.dart';
 
@@ -12,3 +14,5 @@ Map allStorageMap = {
   'storage2Used': 0.0,
   'storage2Free': 0.0,
 };
+
+Map<String, Uint8List> appIcons = <String, Uint8List>{};

@@ -1,6 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pseudofiles/classes/apk.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/utils/constants.dart';
 import 'package:pseudofiles/utils/themes.dart';
@@ -9,11 +10,9 @@ class AppIcon extends StatefulWidget {
   const AppIcon({
     Key? key,
     required this.path,
-    required this.apk,
     this.isCompact = false,
   }) : super(key: key);
   final String path;
-  final APK apk;
   final bool isCompact;
 
   @override
@@ -22,13 +21,13 @@ class AppIcon extends StatefulWidget {
 
 class _AppIconState extends State<AppIcon> {
   Future<dynamic> getAppIcon() async {
-    if (widget.apk.image.isEmpty) {
+    if (appIcons[widget.path] == null) {
       Map map = await FileManager.getApkDetails(widget.path);
       if (map['icon'] != null) {
-        widget.apk.image = map['icon'];
+        appIcons[widget.path] = map['icon'];
       }
     }
-    return widget.apk;
+    return appIcons[widget.path];
   }
 
   @override
@@ -37,14 +36,14 @@ class _AppIconState extends State<AppIcon> {
       future: getAppIcon(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          APK apk = snapshot.data as APK;
-          return apk.image.isNotEmpty
+          Uint8List icon = snapshot.data as Uint8List;
+          return icon.isNotEmpty
               ? !widget.isCompact
                   ? Image.memory(
-                      apk.image,
+                      icon,
                       width: size.width * 0.12,
                     )
-                  : Image.memory(apk.image)
+                  : Image.memory(icon)
               : defaultIcon();
         }
         return defaultIcon();
@@ -61,7 +60,7 @@ class _AppIconState extends State<AppIcon> {
           foregroundColor: FileManager.useMaterial3
               ? Theme.of(context).colorScheme.background
               : Theme.of(context).textTheme.bodyText1!.color,
-          child: const Icon(FontAwesomeIcons.android),
+          child: const FaIcon(FontAwesomeIcons.android),
         )
-      : const Icon(FontAwesomeIcons.android);
+      : const FaIcon(FontAwesomeIcons.android);
 }

@@ -37,9 +37,10 @@ class _InstalledAppsState extends State<InstalledApps> {
               );
               return ListTile(
                 contentPadding: const EdgeInsets.all(5.0),
-                leading: CircleAvatar(
-                  radius: size.width * 0.06,
-                  backgroundImage: MemoryImage(map['icon']),
+                leading: SizedBox(
+                  height: size.width * 0.12,
+                  width: size.width * 0.12,
+                  child: Image.memory(map['icon']),
                 ),
                 title: Text(map['label']),
                 subtitle: Column(

@@ -1,10 +1,8 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:open_file/open_file.dart';
-import 'package:pseudofiles/classes/apk.dart';
 import 'package:pseudofiles/classes/file_manager.dart';
 import 'package:pseudofiles/ui/pages/archive_page.dart';
 import 'package:pseudofiles/ui/widgets/thumbnail_image.dart';
@@ -103,7 +101,6 @@ class FileListTile extends StatelessWidget {
         return AppIcon(
           path: entity.path,
           isCompact: isCompact,
-          apk: APK(entity.path, Uint8List.fromList([])),
         );
       case 'image':
         return getImage(context);
