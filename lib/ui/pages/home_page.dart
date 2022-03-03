@@ -52,7 +52,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
       );
     } else {
-      if (!(await FileManager.isRootDirectory())) {
+      if (FileManager.selectedFiles.value.isNotEmpty) {
+        FileManager.selectedFiles.value = FileManager.selectedFilesForOperation
+            .value = List.from(FileManager.selectedFiles.value)..clear();
+      } else if (!(await FileManager.isRootDirectory())) {
         FileManager.goToParentDirectory();
       } else {
         FileManager.pageController.animateToPage(

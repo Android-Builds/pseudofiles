@@ -105,7 +105,10 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
           return Container(
             height: size.height * 0.08,
             width: size.width,
-            margin: const EdgeInsets.all(20.0),
+            margin: EdgeInsets.symmetric(
+              vertical: 20.0,
+              horizontal: list.isNotEmpty ? 120.0 : 20.0,
+            ),
             padding: const EdgeInsets.all(8.0),
             decoration: BoxDecoration(
               color: FileManager.useMaterial3

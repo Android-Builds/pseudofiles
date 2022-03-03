@@ -18,11 +18,14 @@ class AppsPage extends StatelessWidget {
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: Align(
-                alignment: Alignment.centerLeft,
-                child: TabBar(
-                    indicatorSize: TabBarIndicatorSize.label,
-                    isScrollable: true,
-                    tabs: _tabs.map((String key) => Tab(text: key)).toList())),
+              alignment: Alignment.centerLeft,
+              child: TabBar(
+                labelStyle: Theme.of(context).textTheme.bodyText1,
+                indicatorSize: TabBarIndicatorSize.label,
+                isScrollable: true,
+                tabs: _tabs.map((String key) => Tab(text: key)).toList(),
+              ),
+            ),
           ),
         ),
         body: const TabBarView(children: [
