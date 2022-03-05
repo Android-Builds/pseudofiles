@@ -585,4 +585,40 @@ class FileManager {
     }
     return [];
   }
+
+  static Future<dynamic> getPackageDetails(String packageName) async {
+    try {
+      final Map result = await platform
+          .invokeMethod('getPackageDetails', {'packageName': packageName});
+      return result;
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
+    return '';
+  }
+
+  static void launchApp(String packageName) async {
+    try {
+      await platform.invokeMethod('launchApp', {'packageName': packageName});
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  static void launchSystemInfo(String packageName) async {
+    try {
+      await platform
+          .invokeMethod('launchSystemInfo', {'packageName': packageName});
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  static void uninstallApp(String packageName) async {
+    try {
+      await platform.invokeMethod('uninstallApp', {'packageName': packageName});
+    } on PlatformException catch (e) {
+      debugPrint(e.toString());
+    }
+  }
 }

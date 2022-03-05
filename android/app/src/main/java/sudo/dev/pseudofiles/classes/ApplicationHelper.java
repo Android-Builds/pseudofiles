@@ -5,9 +5,18 @@ import android.app.usage.StorageStats;
 import android.app.usage.StorageStatsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.ConfigurationInfo;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageItemInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PermissionInfo;
+import android.content.pm.ProviderInfo;
+import android.content.pm.ServiceInfo;
+import android.content.pm.Signature;
+import android.content.pm.SigningInfo;
+import android.content.res.XmlResourceParser;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,9 +42,13 @@ import com.google.gson.Gson;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class ApplicationHelper {
@@ -153,7 +166,6 @@ public class ApplicationHelper {
         if(icon != null) {
             appIcon = getImageAsByteArray(drawableToBitmap(icon));
         } else {
-            System.out.println("here");
             Bitmap bitmap = null;
             try {
                 bitmap = BitmapFactory.decodeResource(packageManager.getResourcesForApplication(applicationInfo),
@@ -181,11 +193,116 @@ public class ApplicationHelper {
         app = new HashMap<>();
         app.put("icon", appIcon);
         app.put("label", label);
-        app.put("installedDate", packageInfo.firstInstallTime);
-        app.put("modifiedDate", packageInfo.lastUpdateTime);
+        app.put("source Directory", applicationInfo.sourceDir);
+        app.put("installed Date", packageInfo.firstInstallTime);
+        app.put("modified Date", packageInfo.lastUpdateTime);
         app.put("version", packageInfo.versionName);
         app.put("packageName", packageInfo.packageName);
         return app;
+    }
+
+    public static Map<String, Object> getPackageDetails(String packageName, Context context) {
+        Map<String,Object> allDetails = new HashMap<>();
+        Map<String,Object> smallDetails = new HashMap<>();
+        PackageManager packageManager = context.getPackageManager();
+        PackageInfo packageInfo;
+        try {
+            packageInfo = packageManager.getPackageInfo(packageName, 0);
+            ApplicationInfo applicationInfo = packageInfo.applicationInfo;
+            smallDetails.put("Data Directory", applicationInfo.dataDir);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                smallDetails.put("Compile Sdk Version", applicationInfo.compileSdkVersion);
+            }
+            smallDetails.put("Target Sdk Version", applicationInfo.targetSdkVersion);
+            smallDetails.put("UID", applicationInfo.uid);
+            Signature signature = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES).signatures[0];
+
+            StringBuilder sb=new StringBuilder(signature.toByteArray().length*2);//1 byte...2 hex digits
+            for(int i=0;i<signature.toByteArray().length;i++){
+                sb.append(Integer.toString(signature.toByteArray()[i],16));
+            }
+            String hexValue=sb.toString();
+            smallDetails.put("Signature", signature.toString());
+            allDetails.put("Basic Details", smallDetails);
+
+            packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+            ActivityInfo[] allActivityInfo = packageInfo.activities;
+            allDetails.put("activities", getAllNames(allActivityInfo));
+
+            packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_URI_PERMISSION_PATTERNS);
+            PermissionInfo[] allPermissions = packageInfo.permissions;
+            allDetails.put("allPermissionInfo", getAllNames(allPermissions));
+
+            packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SERVICES);
+            ServiceInfo[] allServiceInfo = packageInfo.services;
+            allDetails.put("services", getAllNames(allServiceInfo));
+
+            packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
+            Signature[] signatures = packageInfo.signatures;
+            allDetails.put("signatures", getAllNames(signatures));
+
+            packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_PROVIDERS);
+            ProviderInfo[] allProviderInfo = packageInfo.providers;
+            allDetails.put("providers", getAllNames(allProviderInfo));
+
+            packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_RECEIVERS);
+            ActivityInfo[] allReceivers = packageInfo.receivers;
+            allDetails.put("receivers", getAllNames(allReceivers));
+
+            packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_CONFIGURATIONS);
+            ConfigurationInfo[]	configPreferences = packageInfo.configPreferences;
+            allDetails.put("config Preferences", getAllNames(configPreferences));
+
+            if(packageInfo.splitNames != null) {
+                allDetails.put("splitNames", Arrays.asList(packageInfo.splitNames));
+            }
+
+            if(applicationInfo.sharedLibraryFiles != null) {
+                allDetails.put("shared Library Files", Arrays.asList(applicationInfo.sharedLibraryFiles));
+            }
+
+            packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_PERMISSIONS);
+            if(packageInfo.requestedPermissions != null) {
+                allDetails.put("permissions", Arrays.asList(packageInfo.requestedPermissions));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return allDetails;
+    }
+
+    static <T> List<String> getAllNames(T[] allObjects) {
+        List<String> names = new ArrayList<>();
+        if(allObjects == null) {
+            return names;
+        }
+        for(T t: allObjects) {
+            try {
+                Field field = t.getClass().getField("name");
+                names.add(String.valueOf(field.get(t)));
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                Log.d("pseudofiles", e.toString());
+            }
+        }
+        return names;
+    }
+
+    public static void uninstallApp(String packageName, Context context) {
+        Intent intent = new Intent(Intent.ACTION_DELETE);
+        intent.setData(Uri.parse("package:"+packageName));
+        context.startActivity(intent);
+    }
+
+    public static void launchApp(String packageName, Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        Intent intent = packageManager.getLaunchIntentForPackage(packageName);
+        context.startActivity(intent);
+    }
+
+    public static void launchSystemInfo(String packageName, Context context) {
+        Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent.setData(Uri.parse("package:" + packageName));
+        context.startActivity(intent);
     }
 
     public static Bitmap drawableToBitmap(Drawable drawable) {

@@ -17,9 +17,11 @@ class ArchivePage extends StatefulWidget {
     Key? key,
     required this.path,
     required this.archivePath,
+    this.isApk = false,
   }) : super(key: key);
   final String path;
   final String archivePath;
+  final bool isApk;
 
   @override
   _ArchivePageState createState() => _ArchivePageState();
@@ -35,7 +37,8 @@ class _ArchivePageState extends State<ArchivePage> {
   @override
   void initState() {
     scrollController = ScrollController();
-    dirPath = Directory(widget.archivePath).parent.path;
+    dirPath =
+        widget.isApk ? widget.path : Directory(widget.archivePath).parent.path;
     BlocProvider.of<GetfilesBloc>(context).add(const GetAllFiles());
     super.initState();
   }
@@ -378,7 +381,9 @@ class _ArchivePageState extends State<ArchivePage> {
     showDialog(
         context: context,
         builder: (context) {
-          dirPath = Directory(widget.archivePath).parent.path;
+          dirPath = widget.isApk
+              ? widget.path
+              : Directory(widget.archivePath).parent.path;
           return AlertDialog(
               contentPadding: const EdgeInsets.all(10.0),
               actionsPadding: EdgeInsets.zero,

@@ -102,24 +102,32 @@ class _ActionButtonsBarState extends State<ActionButtonsBar> {
         valueListenable: FileManager.selectedFilesForOperation,
         builder: (context, value, child) {
           List<FileSystemEntity> list = value as List<FileSystemEntity>;
-          return Container(
-            height: size.height * 0.08,
-            width: size.width,
-            margin: EdgeInsets.symmetric(
-              vertical: 20.0,
-              horizontal: list.isNotEmpty ? 120.0 : 20.0,
-            ),
-            padding: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              color: FileManager.useMaterial3
-                  ? Theme.of(context).colorScheme.surfaceVariant
-                  : Theme.of(context).backgroundColor,
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            child: FittedBox(
-              child: list.isNotEmpty ? operationWidget() : toolsWidget(),
-            ),
-          );
+          return ValueListenableBuilder(
+              valueListenable: FileManager.hideNavbar,
+              builder: (BuildContext context, value, Widget? child) {
+                return !(value as bool)
+                    ? Container(
+                        height: size.height * 0.08,
+                        width: size.width,
+                        margin: EdgeInsets.symmetric(
+                          vertical: 20.0,
+                          horizontal: list.isNotEmpty ? 120.0 : 20.0,
+                        ),
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: FileManager.useMaterial3
+                              ? Theme.of(context).colorScheme.surfaceVariant
+                              : Theme.of(context).backgroundColor,
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        child: FittedBox(
+                          child: list.isNotEmpty
+                              ? operationWidget()
+                              : toolsWidget(),
+                        ),
+                      )
+                    : const SizedBox.shrink();
+              });
         });
   }
 

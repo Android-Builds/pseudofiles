@@ -113,8 +113,27 @@ public class MainActivity extends FlutterActivity {
                                         result.success(SearchHelper.getSearchedFiles(call.argument("fileName"), this));
                                         break;
                                     }
+                                    case "getPackageDetails": {
+                                        result.success(ApplicationHelper.getPackageDetails(call.argument("packageName"), this));
+                                        break;
+                                    }
+                                    case "launchApp": {
+                                        ApplicationHelper.launchApp(call.argument("packageName"), this);
+                                        result.success(null);
+                                        break;
+                                    }
+                                    case "launchSystemInfo": {
+                                        ApplicationHelper.launchSystemInfo(call.argument("packageName"), this);
+                                        result.success(null);
+                                        break;
+                                    }
+                                    case "uninstallApp": {
+                                        ApplicationHelper.uninstallApp(call.argument("packageName"), this);
+                                        result.success(null);
+                                        break;
+                                    }
                                     default:
-                                        throw new IllegalStateException("Unexpected value: " + call.method);
+                                        throw new IllegalStateException("Unexpected Method: " + call.method);
                                 }
                             }).start();
                         }

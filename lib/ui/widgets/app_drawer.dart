@@ -75,6 +75,12 @@ class AppDrawer extends StatelessWidget {
                   'SD Card',
                   '${allStorageMap['storage2Free']} GB free of ${allStorageMap['storage2Total']} GB',
                   () async {
+                    if (FileManager.selectedFiles.value.isNotEmpty &&
+                        FileManager.selectedFilesForOperation.value.isEmpty) {
+                      FileManager.selectedFiles.value = FileManager
+                              .selectedFiles.value =
+                          List.from(FileManager.selectedFiles.value)..clear();
+                    }
                     FileManager.changeDirectory(
                         (await FileManager.getRootDirectories()).last.path);
                     await Future.delayed(const Duration(milliseconds: 200));
@@ -91,6 +97,11 @@ class AppDrawer extends StatelessWidget {
               leading: Icon(categories[index].icon),
               title: Text(categories[index].name),
               onTap: () async {
+                if (FileManager.selectedFilesForOperation.value.isNotEmpty) {
+                  FileManager.selectedFiles.value =
+                      FileManager.selectedFilesForOperation.value =
+                          List.from(FileManager.selectedFiles.value)..clear();
+                }
                 if (index == 0) {
                   FileManager.changeDirectory(FileManager.joinPaths(
                       (await FileManager.getRootDirectories())[0].path,
