@@ -29,6 +29,12 @@ lightThemeExp(Color color) => ThemeData(
         foregroundColor: Colors.black,
       ),
       iconTheme: const IconThemeData(color: Colors.white),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: MaterialStateProperty.resolveWith(
+            (states) => lightScheme(color).primary),
+        checkColor: MaterialStateProperty.resolveWith(
+            (states) => lightScheme(color).background),
+      ),
     );
 
 darkThemeExp(Color color) => ThemeData(
@@ -46,6 +52,12 @@ darkThemeExp(Color color) => ThemeData(
         backgroundColor: darkScheme(color).background,
         elevation: 0.0,
         iconTheme: IconThemeData(color: darkScheme(color).secondary),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: MaterialStateProperty.resolveWith(
+            (states) => darkScheme(color).primary),
+        checkColor: MaterialStateProperty.resolveWith(
+            (states) => darkScheme(color).background),
       ),
     );
 

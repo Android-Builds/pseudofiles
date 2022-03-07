@@ -83,6 +83,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           Widget body = PageView(
             onPageChanged: (value) {
               homeTabController.index = value;
+              if (value == 0) {
+                FileManager.hideNavbar.value = true;
+              } else {
+                FileManager.hideNavbar.value = false;
+              }
             },
             physics: FileManager.keepNavbarHidden
                 ? const AlwaysScrollableScrollPhysics()
